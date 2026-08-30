@@ -841,18 +841,18 @@
         <div class="who-start-label">Ponle nombre e ícono a cada quién, así siempre queda claro quién propuso o eligió cada cosa.</div>
         <div class="who-fields">
             <div class="who-field-group">
-                <input type="text" class="who-emoji-input" id="whoEmoji1" value="🙋" maxlength="2" />
-                <input type="text" class="who-name-input" id="whoName1" value="Tú" placeholder="Tu nombre" />
+                <input type="text" class="who-emoji-input" id="whoEmoji1" value="🙋‍♂️" maxlength="2" />
+                <input type="text" class="who-name-input" id="whoName1" value="Jhefersony" placeholder="Tu nombre" />
             </div>
             <div class="who-field-group">
                 <input type="text" class="who-emoji-input" id="whoEmoji2" value="👩" maxlength="2" />
-                <input type="text" class="who-name-input" id="whoName2" value="Pareja" placeholder="Nombre de tu pareja" />
+                <input type="text" class="who-name-input" id="whoName2" value="Yesly" placeholder="Nombre de tu pareja" />
             </div>
         </div>
         <div class="who-start-label">¿Quién eres tú ahora mismo, usando la app?</div>
         <div class="who-select-row" id="whoSelectRow">
-            <button class="who-select-btn chosen" id="whoSelectBtn1" data-user="tu"><span class="emoji-big">🙋</span><span id="whoSelectLabel1">Tú</span></button>
-            <button class="who-select-btn" id="whoSelectBtn2" data-user="pareja"><span class="emoji-big">👩</span><span id="whoSelectLabel2">Pareja</span></button>
+            <button class="who-select-btn chosen" id="whoSelectBtn1" data-user="tu"><span class="emoji-big">🙋‍♂️</span><span id="whoSelectLabel1">Jhefersony</span></button>
+            <button class="who-select-btn" id="whoSelectBtn2" data-user="pareja"><span class="emoji-big">👩</span><span id="whoSelectLabel2">Yesly</span></button>
         </div>
         <button class="btn-save" id="whoStartBtn"><i class="fas fa-check"></i> Listo, comenzar</button>
     </div>
@@ -873,7 +873,7 @@
         ];
 
         // ---------- IDENTIDAD: QUIÉN ES QUIÉN ----------
-        let people = { tu: { name: 'Tú', emoji: '🙋' }, pareja: { name: 'Pareja', emoji: '👩' } };
+        let people = { tu: { name: 'Jhefersony', emoji: '🙋‍♂️' }, pareja: { name: 'Yesly', emoji: '👩' } };
         let activeUser = 'tu';
 
         let currentIdeas = [...ideaBank];
@@ -980,9 +980,9 @@
             whoModal.classList.add('show');
         }
         function updateWhoSelectButtons() {
-            whoSelectLabel1.textContent = whoName1.value || 'Tú';
-            whoSelectLabel2.textContent = whoName2.value || 'Pareja';
-            whoSelectBtn1.querySelector('.emoji-big').textContent = whoEmoji1.value || '🙋';
+            whoSelectLabel1.textContent = whoName1.value || 'Jhefersony';
+            whoSelectLabel2.textContent = whoName2.value || 'Yesly';
+            whoSelectBtn1.querySelector('.emoji-big').textContent = whoEmoji1.value || '🙋‍♂️';
             whoSelectBtn2.querySelector('.emoji-big').textContent = whoEmoji2.value || '👩';
             whoSelectBtn1.classList.toggle('chosen', pendingSelectedUser === 'tu');
             whoSelectBtn2.classList.toggle('chosen', pendingSelectedUser === 'pareja');
@@ -992,9 +992,9 @@
         whoSelectBtn2.addEventListener('click', () => { pendingSelectedUser = 'pareja'; updateWhoSelectButtons(); });
 
         whoStartBtn.addEventListener('click', () => {
-            people.tu.name = whoName1.value.trim() || 'Tú';
-            people.tu.emoji = whoEmoji1.value.trim() || '🙋';
-            people.pareja.name = whoName2.value.trim() || 'Pareja';
+            people.tu.name = whoName1.value.trim() || 'Jhefersony';
+            people.tu.emoji = whoEmoji1.value.trim() || '🙋‍♂️';
+            people.pareja.name = whoName2.value.trim() || 'Yesly';
             people.pareja.emoji = whoEmoji2.value.trim() || '👩';
             activeUser = pendingSelectedUser;
             renderAvatars();
