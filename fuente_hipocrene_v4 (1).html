@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>La Fuente de Hipocrene</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(160deg, #0a1230 0%, #142454 49.5%, #2a1854 50.5%, #3b1f6b 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(1.5px 1.5px at 15% 20%, rgba(255,255,255,0.5), transparent),
+                radial-gradient(1.5px 1.5px at 35% 65%, rgba(255,255,255,0.3), transparent),
+                radial-gradient(2px 2px at 55% 15%, rgba(180,150,255,0.5), transparent),
+                radial-gradient(1.5px 1.5px at 75% 75%, rgba(255,255,255,0.3), transparent),
+                radial-gradient(2px 2px at 90% 40%, rgba(120,160,255,0.5), transparent),
+                radial-gradient(1.5px 1.5px at 10% 85%, rgba(255,255,255,0.3), transparent);
+            background-size: 260px 260px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .app-container { max-width: 520px; width: 100%; position: relative; z-index: 1; }
+
+        /* HEADER */
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 8px 16px 8px; color: white;
+        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .logo {
+            font-family: 'Great Vibes', cursive;
+            font-size: 40px; font-weight: 400;
+            background: linear-gradient(135deg, #4d8dff 0%, #8b5cf6 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: 0.5px; line-height: 1;
+        }
+        .badge {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            padding: 6px 16px; border-radius: 30px;
+            font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .header-right { display: flex; align-items: center; gap: 16px; }
+        .avatar-group { display: flex; align-items: center; }
+        .avatar-btn { cursor: pointer; transition: 0.2s; }
+        .avatar-btn:hover { transform: scale(1.08); }
+        .settings-btn {
+            width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 13px; transition: 0.2s;
+        }
+        .settings-btn:hover { background: rgba(255,255,255,0.15); color: white; }
+        .active-user-strip {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 0 8px 14px; color: rgba(255,255,255,0.55); font-size: 12.5px; font-weight: 600;
+        }
+        .active-user-strip strong { color: #8bb4ff; }
+        .active-user-strip button {
+            border: none; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.75);
+            padding: 4px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 700; cursor: pointer;
+            font-family: 'Inter', sans-serif; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .active-user-strip button:hover { background: rgba(255,255,255,0.16); }
+
+        /* MODAL BIENVENIDA / IDENTIDAD */
+        .who-fields { display: flex; flex-direction: column; gap: 14px; margin-bottom: 18px; }
+        .who-field-group {
+            display: flex; gap: 10px; align-items: center; background: rgba(255,255,255,0.04);
+            padding: 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06);
+        }
+        .who-emoji-input {
+            width: 52px; height: 52px; flex-shrink: 0; text-align: center; font-size: 24px;
+            border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05);
+            color: white; outline: none;
+        }
+        .who-name-input {
+            flex: 1; padding: 13px 16px; border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.05);
+            color: white; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; outline: none;
+        }
+        .who-name-input:focus, .who-emoji-input:focus { border-color: #4d8dff; }
+        .who-start-label { text-align: center; font-size: 12.5px; color: rgba(255,255,255,0.5); margin-bottom: 10px; }
+        .who-select-row { display: flex; gap: 10px; margin-bottom: 16px; }
+        .who-select-btn {
+            flex: 1; padding: 14px 10px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.7); font-family: 'Inter', sans-serif;
+            font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.2s;
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
+        }
+        .who-select-btn .emoji-big { font-size: 26px; }
+        .who-select-btn.chosen {
+            background: linear-gradient(135deg, #3b6fe0 0%, #7c3aed 100%); color: white; border-color: transparent;
+        }
+        .proposer-tag { font-size: 10.5px; opacity: 0.7; }
+        .avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.2); margin-left: -8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; background: rgba(255,255,255,0.08); backdrop-filter: blur(5px);
+        }
+        .avatar:first-child { margin-left: 0; }
+        .avatar.active { border-color: #4d8dff; box-shadow: 0 0 20px rgba(77,141,255,0.35); }
+        .counter-badge {
+            background: rgba(255,255,255,0.06); backdrop-filter: blur(10px);
+            padding: 6px 14px; border-radius: 30px; font-size: 13px; font-weight: 600;
+            color: rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex; gap: 6px; padding: 0 8px 18px; overflow-x: auto;
+        }
+        .tab-btn {
+            flex: 1;
+            min-width: 84px;
+            padding: 12px 8px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.6);
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 12.5px;
+            cursor: pointer;
+            transition: 0.25s;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            white-space: nowrap;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #3b6fe0 0%, #7c3aed 100%);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 8px 24px rgba(59,111,224,0.35);
+        }
+
+        .view { display: none; }
+        .view.active { display: block; }
+
+        .section-label {
+            color: rgba(255,255,255,0.55);
+            font-size: 13px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            padding: 0 8px 10px;
+        }
+
+        /* CARRUSEL */
+        .carousel-wrap { position: relative; margin-bottom: 20px; }
+        .carousel {
+            display: flex; gap: 16px; overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding: 4px 8px 16px;
+            scrollbar-width: thin; scrollbar-color: rgba(77,141,255,0.5) transparent;
+        }
+        .carousel::-webkit-scrollbar { height: 6px; }
+        .carousel::-webkit-scrollbar-thumb { background: rgba(77,141,255,0.4); border-radius: 10px; }
+        .carousel::-webkit-scrollbar-track { background: transparent; }
+
+        .card {
+            position: relative; flex: 0 0 78%; scroll-snap-align: center;
+            height: 460px; border-radius: 28px; overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
+        }
+        .card.chosen {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 3px #4d8dff, 0 20px 60px rgba(77,141,255,0.4);
+        }
+        .card-image { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .card-gradient {
+            position: absolute; bottom: 0; left: 0; right: 0; height: 60%;
+            background: linear-gradient(to top, rgba(2,6,20,0.9) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        .card-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 26px 22px 22px; color: white; }
+        .card-title { font-size: 27px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.3px; }
+        .card-subtitle { font-size: 14px; opacity: 0.8; display: flex; align-items: center; gap: 10px; }
+        .card-proposer {
+            display: inline-block; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);
+            padding: 4px 14px; border-radius: 30px; font-size: 12px; font-weight: 600;
+            margin-top: 8px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .heart-btn {
+            position: absolute; top: 16px; right: 16px; width: 52px; height: 52px;
+            border-radius: 50%; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: white;
+            background: rgba(10,14,35,0.55); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .heart-btn:hover { transform: scale(1.1); }
+        .heart-btn:active { transform: scale(0.85); }
+        .heart-btn.filled {
+            background: linear-gradient(135deg, #4d8dff 0%, #8b5cf6 100%);
+            border-color: transparent;
+            box-shadow: 0 0 24px rgba(77,141,255,0.6);
+            animation: heartPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes heartPop { 0% { transform: scale(0.6); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+
+        .chosen-badge {
+            position: absolute; top: 18px; left: 18px;
+            background: linear-gradient(135deg, #4d8dff 0%, #8b5cf6 100%);
+            color: white; font-weight: 700; font-size: 12px; letter-spacing: 0.3px;
+            padding: 7px 14px; border-radius: 30px; display: none;
+            align-items: center; gap: 6px;
+            box-shadow: 0 6px 20px rgba(77,141,255,0.4);
+            animation: matchPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .card.chosen .chosen-badge { display: flex; }
+
+        .add-row { display: flex; justify-content: center; align-items: center; gap: 14px; padding: 4px 0 20px; }
+        .action-btn.add {
+            background: rgba(255,255,255,0.06); border: 1px dashed rgba(255,255,255,0.25);
+            width: 56px; height: 56px; border-radius: 50%; font-size: 20px; color: white;
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;
+        }
+        .action-btn.add:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }
+        .action-btn.decide {
+            width: 56px; height: 56px; border-radius: 50%; font-size: 20px; color: white;
+            cursor: pointer; transition: 0.25s cubic-bezier(0.34,1.56,0.64,1); display: flex;
+            align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.15);
+        }
+        .action-btn.decide:hover { transform: scale(1.08) rotate(-6deg); }
+        .action-btn.decide:active { transform: scale(0.88); }
+        .action-btn.dice { background: linear-gradient(135deg, #3b6fe0 0%, #7c3aed 100%); box-shadow: 0 8px 20px rgba(59,111,224,0.35); }
+        .action-btn.coin { background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%); box-shadow: 0 8px 20px rgba(184,134,11,0.35); }
+        @keyframes diceSpin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.2); } 100% { transform: rotate(360deg) scale(1); } }
+        @keyframes coinFlip { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(1440deg); } }
+        .action-btn.dice.spinning { animation: diceSpin 0.7s ease; }
+        .action-btn.coin.spinning { animation: coinFlip 0.9s ease; }
+
+        /* MATCH BANNER */
+        .match-banner {
+            background: linear-gradient(135deg, #3b6fe0 0%, #7c3aed 100%);
+            border-radius: 20px; padding: 16px 24px; margin-bottom: 20px;
+            display: none; align-items: center; justify-content: space-between;
+            animation: matchPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 10px 40px rgba(59,111,224,0.35);
+        }
+        .match-banner.show { display: flex; }
+        @keyframes matchPop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .match-banner-left { display: flex; align-items: center; gap: 12px; color: white; font-weight: 700; font-size: 18px; }
+        .match-banner-left i { font-size: 28px; }
+        .match-banner-right { display: flex; gap: 8px; }
+        .match-banner-right button {
+            background: rgba(255,255,255,0.2); border: none; color: white;
+            padding: 8px 16px; border-radius: 30px; font-weight: 600; font-size: 13px;
+            cursor: pointer; transition: 0.2s; font-family: 'Inter', sans-serif;
+        }
+        .match-banner-right button:hover { background: rgba(255,255,255,0.3); }
+
+        /* CALENDARIO */
+        .calendar-section {
+            background: rgba(255,255,255,0.045); backdrop-filter: blur(20px);
+            border-radius: 24px; padding: 20px; border: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 16px;
+        }
+        .calendar-section label {
+            color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 600; display: block;
+            margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .calendar-section input {
+            width: 100%; padding: 14px 18px; border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.05);
+            color: white; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500;
+            outline: none; transition: 0.2s;
+        }
+        .calendar-section input:focus { border-color: #4d8dff; background: rgba(255,255,255,0.08); }
+        .calendar-section input::-webkit-calendar-picker-indicator { filter: invert(1); }
+        .selected-plan {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 12px; padding: 12px 16px; background: rgba(255,255,255,0.04);
+            border-radius: 16px; color: rgba(255,255,255,0.7); font-size: 14px;
+        }
+        .selected-plan strong { color: white; }
+
+        .plan-extra-fields { display: flex; gap: 10px; margin-top: 12px; }
+        .plan-extra-fields .piggy-field { flex: 1; }
+        .plan-extra-fields .piggy-field input,
+        .plan-extra-fields .piggy-field select {
+            width: 100%; padding: 12px 14px; border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.05);
+            color: white; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; outline: none;
+        }
+        .plan-extra-fields .piggy-field label {
+            display: block; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.55);
+            text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px;
+        }
+        .location-field { margin-top: 12px; }
+        .location-field label {
+            display: block; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.55);
+            text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px;
+        }
+        .location-field input {
+            width: 100%; padding: 12px 14px; border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.05);
+            color: white; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; outline: none;
+        }
+        .piggy-toggle-row {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            margin-top: 12px; padding: 12px 14px; background: rgba(255,255,255,0.04);
+            border-radius: 14px; border: 1px solid rgba(255,255,255,0.06);
+        }
+        .piggy-toggle-row span { font-size: 13px; color: rgba(255,255,255,0.75); font-weight: 600; }
+        .piggy-toggle-row .toggle-hint { font-size: 11px; color: rgba(255,255,255,0.4); font-weight: 500; display: block; margin-top: 2px; }
+        .switch { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .switch-track {
+            position: absolute; cursor: pointer; inset: 0; background: rgba(255,255,255,0.15);
+            border-radius: 30px; transition: 0.25s;
+        }
+        .switch-track::before {
+            content: ''; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px;
+            background: white; border-radius: 50%; transition: 0.25s;
+        }
+        .switch input:checked + .switch-track { background: linear-gradient(135deg, #3b6fe0 0%, #7c3aed 100%); }
+        .switch input:checked + .switch-track::before { transform: translateX(20px); }
+        .icon-picker-row { margin-top: 12px; }
+        .icon-picker-row label {
+            display: block; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.55);
+            text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px;
+        }
+        .icon-picker-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        .icon-choice {
+            width: 40px; height: 40px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;
+            font-size: 19px; cursor: pointer; transition: 0.2s;
+        }
+        .icon-choice.selected { background: linear-gradient(135deg, #3b6fe0 0%, #7c3aed 100%); border-color: transparent; transform: scale(1.08); }
+        .use-image-toggle {
+            display: flex; gap: 8px; margin-top: 12px;
+        }
+        .use-image-toggle button {
+            flex: 1; padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.6); font-family: 'Inter', sans-serif;
+            font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s;
+        }
+        .use-image-toggle button.active {
+            background: linear-gradient(135deg, #3b6fe0 0%, #7c3aed 100%); color: white; border-color: transparent;
+        }
+
+        .sort-toggle {
+            border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.65); border-radius: 10px; padding: 4px 10px;
+            font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;
+        }
+        .sort-toggle:hover { background: rgba(255,255,255,0.1); }
+        .plan-meta-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+        .plan-meta-chip {
+            font-size: 10.5px; font-weight: 600; padding: 3px 9px; border-radius: 20px;
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.08);
+            white-space: nowrap;
+        }
+        .plan-meta-chip.budget { color: #9ee6b8; border-color: rgba(158,230,184,0.25); }
+        .plan-meta-chip.piggy { color: #ffd479; border-color: rgba(255,212,121,0.25); }
+        .history-item { flex-wrap: wrap; }
+        .history-item .plan-icon { font-size: 18px; }
+        .history-item .plan-main { display: flex; flex-direction: column; flex: 1; min-width: 0; gap: 3px; }
+        .history-item .plan-name-row { display: flex; align-items: center; gap: 8px; }
+
+        .btn-save, .btn-primary {
+            width: 100%; margin-top: 12px; padding: 14px; border: none; border-radius: 16px;
+            background: linear-gradient(135deg, #3b6fe0 0%, #7c3aed 100%);
+            color: white; font-weight: 700; font-size: 16px;
+            font-family: 'Inter', sans-serif; cursor: pointer; transition: 0.2s;
+        }
+        .btn-save:hover, .btn-primary:hover { transform: scale(0.98); box-shadow: 0 10px 30px rgba(59,111,224,0.35); }
+
+        /* HISTORIAL */
+        .history-section {
+            background: rgba(255,255,255,0.035); backdrop-filter: blur(10px);
+            border-radius: 20px; padding: 16px 20px; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .history-header {
+            display: flex; justify-content: space-between; color: rgba(255,255,255,0.5);
+            font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+        .history-list { display: flex; flex-direction: column; gap: 8px; min-height: 40px; }
+        .history-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 14px; background: rgba(255,255,255,0.04); border-radius: 12px;
+            color: rgba(255,255,255,0.8); font-size: 14px; border-left: 3px solid #4d8dff;
+            animation: slideIn 0.3s ease; gap: 10px;
+        }
+        @keyframes slideIn { 0% { transform: translateX(-20px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+        .history-item .date { font-size: 12px; opacity: 0.5; white-space: nowrap; }
+        .history-item .plan-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .album-btn {
+            border: none; background: rgba(139,92,246,0.2); color: #c4b5fd;
+            border: 1px solid rgba(139,92,246,0.4);
+            padding: 6px 10px; border-radius: 10px; font-size: 12px; font-weight: 600;
+            cursor: pointer; transition: 0.2s; white-space: nowrap; display: flex; align-items: center; gap: 5px;
+        }
+        .album-btn:hover { background: rgba(139,92,246,0.35); }
+        .album-btn .count { background: rgba(255,255,255,0.15); padding: 1px 6px; border-radius: 8px; }
+        .empty-history { color: rgba(255,255,255,0.3); font-size: 14px; text-align: center; padding: 12px; }
+
+        /* ALCANCÍA */
+        .piggy-card {
+            background: rgba(255,255,255,0.045); backdrop-filter: blur(20px);
+            border-radius: 24px; padding: 24px; border: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 16px; color: white;
+        }
+        .piggy-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .piggy-icon {
+            width: 52px; height: 52px; border-radius: 50%;
+            background: linear-gradient(135deg, #3b6fe0 0%, #7c3aed 100%);
+            display: flex; align-items: center; justify-content: center; font-size: 24px;
+            box-shadow: 0 8px 24px rgba(59,111,224,0.35);
+        }
+        .piggy-title { font-size: 19px; font-weight: 800; }
+        .piggy-sub { font-size: 13px; color: rgba(255,255,255,0.55); }
+
+        .piggy-amount {
+            text-align: center; margin: 8px 0 20px;
+        }
+        .piggy-amount .big {
+            font-size: 42px; font-weight: 900;
+            background: linear-gradient(135deg, #7db2ff 0%, #b794f6 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+        .piggy-amount .of-goal { font-size: 14px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+
+        .progress-track {
+            width: 100%; height: 14px; border-radius: 20px;
+            background: rgba(255,255,255,0.08); overflow: hidden; margin-bottom: 8px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .progress-fill {
+            height: 100%; border-radius: 20px;
+            background: linear-gradient(90deg, #3b6fe0 0%, #8b5cf6 100%);
+            width: 0%; transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 0 16px rgba(139,92,246,0.5);
+        }
+        .progress-caption { font-size: 12px; color: rgba(255,255,255,0.5); text-align: right; margin-bottom: 20px; }
+
+        .piggy-inputs { display: flex; gap: 12px; margin-bottom: 16px; }
+        .piggy-field { flex: 1; }
+        .piggy-field label {
+            display: block; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.55);
+            text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px;
+        }
+        .piggy-field input {
+            width: 100%; padding: 12px 14px; border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.05);
+            color: white; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; outline: none;
+        }
+        .piggy-field input:focus { border-color: #4d8dff; }
+
+        .piggy-stats { display: flex; gap: 10px; margin-top: 16px; }
+        .piggy-stat {
+            flex: 1; background: rgba(255,255,255,0.04); border-radius: 14px; padding: 12px;
+            text-align: center; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .piggy-stat .val { font-size: 18px; font-weight: 800; color: #b7c9ff; }
+        .piggy-stat .lab { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.3px; }
+
+        .piggy-log-section { background: rgba(255,255,255,0.035); border-radius: 20px; padding: 16px 20px; border: 1px solid rgba(255,255,255,0.05); }
+        .piggy-log-list { display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; margin-top: 4px; }
+        .piggy-log-item {
+            display: flex; justify-content: space-between; padding: 9px 12px;
+            background: rgba(255,255,255,0.04); border-radius: 10px; font-size: 13px;
+            color: rgba(255,255,255,0.75); border-left: 3px solid #8b5cf6;
+        }
+
+        /* MODAL ÁLBUM */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(3,6,18,0.75);
+            backdrop-filter: blur(6px); display: none; align-items: flex-end;
+            justify-content: center; z-index: 500;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-sheet {
+            width: 100%; max-width: 520px; background: linear-gradient(160deg, #0d1533 0%, #171f45 100%);
+            border-radius: 28px 28px 0 0; padding: 22px 20px 26px;
+            border: 1px solid rgba(255,255,255,0.08); border-bottom: none;
+            max-height: 82vh; overflow-y: auto;
+            animation: sheetUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes sheetUp { 0% { transform: translateY(40px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+        .modal-handle { width: 40px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 10px; margin: 0 auto 16px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .modal-title { color: white; font-size: 18px; font-weight: 800; }
+        .modal-close {
+            width: 34px; height: 34px; border-radius: 50%; border: none;
+            background: rgba(255,255,255,0.08); color: white; font-size: 16px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .album-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;
+        }
+        .album-photo {
+            position: relative; aspect-ratio: 1; border-radius: 14px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .album-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .album-photo .remove-photo {
+            position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%;
+            background: rgba(0,0,0,0.6); border: none; color: white; font-size: 11px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .album-empty {
+            grid-column: 1 / -1; text-align: center; color: rgba(255,255,255,0.35);
+            font-size: 14px; padding: 30px 10px;
+        }
+        .album-add-btn {
+            width: 100%; padding: 14px; border-radius: 16px; border: 1px dashed rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.8); font-family: 'Inter', sans-serif;
+            font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .album-add-btn:hover { background: rgba(255,255,255,0.08); }
+
+        /* IDEAS AL AIRE */
+        .air-sky {
+            position: relative; min-height: 380px; border-radius: 24px; overflow: hidden;
+            background: radial-gradient(circle at 30% 20%, rgba(139,92,246,0.12), transparent 60%),
+                        rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06); margin-bottom: 16px; padding: 16px;
+        }
+        .air-empty { color: rgba(255,255,255,0.35); font-size: 14px; text-align: center; padding: 60px 20px; }
+        .air-bubble {
+            position: absolute; display: flex; flex-direction: column; align-items: center; gap: 4px;
+            cursor: pointer; animation: floaty 5s ease-in-out infinite; width: 92px; text-align: center;
+        }
+        @keyframes floaty { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-14px); } }
+        .air-bubble .shape {
+            width: 62px; height: 62px; border-radius: 50%;
+            background: linear-gradient(135deg, rgba(77,141,255,0.35), rgba(139,92,246,0.35));
+            backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.25);
+            display: flex; align-items: center; justify-content: center; font-size: 24px;
+            box-shadow: 0 8px 24px rgba(77,141,255,0.25);
+        }
+        .air-bubble.star .shape { border-radius: 30% 70% 65% 35% / 40% 45% 55% 60%; }
+        .air-bubble .label {
+            font-size: 11px; font-weight: 700; color: white; background: rgba(3,6,18,0.55);
+            padding: 3px 8px; border-radius: 10px; max-width: 100px; overflow: hidden;
+            text-overflow: ellipsis; white-space: nowrap;
+        }
+        .air-bubble.developed .shape {
+            background: linear-gradient(135deg, rgba(77,255,150,0.35), rgba(139,92,246,0.35));
+            border-color: rgba(158,230,184,0.5);
+        }
+        .air-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+        .air-form input, .air-form textarea {
+            width: 100%; padding: 13px 16px; border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.05);
+            color: white; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500;
+            outline: none; resize: none;
+        }
+        .air-form input:focus, .air-form textarea:focus { border-color: #4d8dff; }
+
+        /* MODAL DESARROLLAR IDEA */
+        .air-detail-title { font-size: 15px; color: rgba(255,255,255,0.6); margin-bottom: 12px; }
+        .air-detail-title strong { color: white; display: block; font-size: 19px; margin-bottom: 4px; }
+
+        /* RECUERDOS */
+        .memories-carousel {
+            display: flex; gap: 14px; overflow-x: auto; padding: 4px 4px 14px;
+            scroll-snap-type: x mandatory;
+        }
+        .memory-card {
+            flex: 0 0 68%; scroll-snap-align: center; border-radius: 22px; overflow: hidden;
+            position: relative; height: 280px; box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+        }
+        .memory-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .memory-card .memory-caption {
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 16px;
+            background: linear-gradient(to top, rgba(2,6,20,0.9), transparent);
+            color: white; font-size: 13px; font-weight: 600;
+        }
+
+        @media (max-width: 480px) {
+            .card { flex: 0 0 84%; height: 400px; }
+            .card-title { font-size: 23px; }
+            .logo { font-size: 30px; }
+            .header { padding-bottom: 12px; }
+            .piggy-amount .big { font-size: 34px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">La Fuente de Hipocrene</div>
+            <span class="badge">✦ PRO</span>
+        </div>
+        <div class="header-right">
+            <div class="avatar-group" id="avatarGroup"></div>
+            <button class="settings-btn" id="whoSettingsBtn" title="Editar usuarios"><i class="fas fa-user-gear"></i></button>
+            <span class="counter-badge" id="counterDisplay">8 💡</span>
+        </div>
+    </div>
+
+    <!-- FRANJA: QUIÉN SOY -->
+    <div class="active-user-strip">
+        <span>Estás como <strong id="activeUserLabel">Tú</strong></span>
+        <button id="switchUserBtn"><i class="fas fa-right-left"></i> Cambiar</button>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="planes"><i class="fas fa-heart"></i> Planes</button>
+        <button class="tab-btn" data-tab="aire"><i class="fas fa-cloud"></i> Ideas al aire</button>
+        <button class="tab-btn" data-tab="alcancia"><i class="fas fa-piggy-bank"></i> Alcancía</button>
+        <button class="tab-btn" data-tab="recuerdos"><i class="fas fa-images"></i> Recuerdos</button>
+    </div>
+
+    <!-- VISTA: PLANES -->
+    <div class="view active" id="view-planes">
+        <div class="section-label">Desliza y elige tocando el corazón</div>
+
+        <div class="carousel-wrap">
+            <div class="carousel" id="carousel"></div>
+        </div>
+
+        <div class="add-row">
+            <button class="action-btn decide dice" id="randomBtn" title="Elegir al azar"><i class="fas fa-dice"></i></button>
+            <button class="action-btn add" id="addIdeaBtn"><i class="fas fa-plus"></i></button>
+            <button class="action-btn decide coin" id="coinBtn" title="Cara o sello entre dos ideas"><i class="fas fa-coins"></i></button>
+        </div>
+
+        <div class="match-banner" id="matchBanner">
+            <div class="match-banner-left">
+                <i class="fas fa-star"></i>
+                <span>¡Match! <span id="matchIdeaName">Sushi</span></span>
+            </div>
+            <div class="match-banner-right">
+                <button onclick="scrollToCalendar()"><i class="fas fa-calendar"></i> Agendar</button>
+            </div>
+        </div>
+
+        <div class="calendar-section" id="calendarSection">
+            <label><i class="far fa-calendar-alt"></i> Fijar fecha y hora</label>
+            <input type="datetime-local" id="dateTimePicker" value="2026-08-30T19:30" />
+            <div class="selected-plan">
+                <span>Plan ganador:</span>
+                <strong id="selectedPlanDisplay">Ninguno</strong>
+            </div>
+
+            <div class="location-field">
+                <label><i class="fas fa-map-marker-alt"></i> Lugar</label>
+                <input type="text" id="locationInput" placeholder="Ej. Centro comercial, casa de..." />
+            </div>
+
+            <div class="plan-extra-fields">
+                <div class="piggy-field">
+                    <label>Presupuesto</label>
+                    <input type="number" id="planBudgetInput" placeholder="Ej. 80000" min="0" />
+                </div>
+                <div class="piggy-field">
+                    <label>Clasificación</label>
+                    <select id="planBudgetClass">
+                        <option value="Bajo">💚 Bajo</option>
+                        <option value="Medio">💛 Medio</option>
+                        <option value="Alto">❤️ Alto</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="piggy-toggle-row">
+                <span>Usar la alcancía
+                    <span class="toggle-hint" id="piggyAvailableHint">Se descontará del ahorro actual</span>
+                </span>
+                <label class="switch">
+                    <input type="checkbox" id="usePiggyToggle" />
+                    <span class="switch-track"></span>
+                </label>
+            </div>
+
+            <div class="icon-picker-row" id="iconPickerRow" style="display:none;">
+                <label><i class="fas fa-icons"></i> Elige un ícono para el plan (sin imagen)</label>
+                <div class="icon-picker-grid" id="iconPickerGrid"></div>
+            </div>
+            <div class="use-image-toggle">
+                <button type="button" class="active" id="useImageBtn"><i class="fas fa-image"></i> Usar imagen de la idea</button>
+                <button type="button" id="useIconBtn"><i class="fas fa-icons"></i> Usar ícono en su lugar</button>
+            </div>
+
+            <button class="btn-save" id="savePlanBtn">
+                <i class="fas fa-save"></i> Guardar salida
+            </button>
+        </div>
+
+        <div class="history-section">
+            <div class="history-header">
+                <span><i class="far fa-calendar-check"></i> Próximas salidas</span>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <button class="sort-toggle" id="sortByTimeBtn"><i class="fas fa-sort"></i> Por tiempo</button>
+                    <span id="historyCount">0</span>
+                </div>
+            </div>
+            <div class="history-list" id="historyList">
+                <div class="empty-history">Aún no hay planes guardados ✨</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VISTA: ALCANCÍA -->
+    <div class="view" id="view-alcancia">
+        <div class="piggy-card">
+            <div class="piggy-header">
+                <div class="piggy-icon"><i class="fas fa-piggy-bank"></i></div>
+                <div>
+                    <div class="piggy-title">Nuestra alcancía</div>
+                    <div class="piggy-sub">Ahorro diario a tasa fija</div>
+                </div>
+            </div>
+
+            <div class="piggy-amount">
+                <div class="big" id="piggyTotal">$0</div>
+                <div class="of-goal">de <strong id="piggyGoalDisplay">$0</strong> meta</div>
+            </div>
+
+            <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="progress-caption" id="progressCaption">0% ahorrado</div>
+
+            <div class="piggy-inputs">
+                <div class="piggy-field">
+                    <label>Meta de ahorro</label>
+                    <input type="number" id="goalInput" placeholder="Ej. 500000" min="0" />
+                </div>
+                <div class="piggy-field">
+                    <label>Tasa diaria fija</label>
+                    <input type="number" id="rateInput" placeholder="Ej. 10000" min="0" />
+                </div>
+            </div>
+
+            <button class="btn-primary" id="saveTodayBtn"><i class="fas fa-coins"></i> Ahorrar hoy</button>
+
+            <div class="piggy-stats">
+                <div class="piggy-stat">
+                    <div class="val" id="statDays">0</div>
+                    <div class="lab">Días ahorrando</div>
+                </div>
+                <div class="piggy-stat">
+                    <div class="val" id="statRemaining">—</div>
+                    <div class="lab">Días para la meta</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="piggy-log-section">
+            <div class="history-header">
+                <span><i class="fas fa-list"></i> Registro de ahorro</span>
+                <span id="logCount">0</span>
+            </div>
+            <div class="piggy-log-list" id="piggyLogList">
+                <div class="empty-history">Aún no registras ahorros 🐷</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VISTA: IDEAS AL AIRE -->
+    <div class="view" id="view-aire">
+        <div class="section-label">Suelta una idea sin terminar para que la otra persona la desarrolle</div>
+        <div class="air-form">
+            <input type="text" id="airIdeaTitle" placeholder="Ej. Algo con comida coreana..." />
+            <textarea id="airIdeaNote" rows="2" placeholder="Una pista o detalle suelto (opcional)"></textarea>
+            <button class="btn-save" id="airIdeaAddBtn"><i class="fas fa-feather"></i> Soltarla al aire</button>
+        </div>
+        <div class="air-sky" id="airSky">
+            <div class="air-empty">Aún no hay ideas flotando por aquí ☁️</div>
+        </div>
+    </div>
+
+    <!-- VISTA: RECUERDOS -->
+    <div class="view" id="view-recuerdos">
+        <div class="section-label">Carrusel de recuerdos de todas las salidas</div>
+        <div class="memories-carousel" id="memoriesCarousel">
+            <div class="empty-history">Aún no hay recuerdos guardados 📷</div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL ÁLBUM -->
+<div class="modal-overlay" id="albumModal">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-header">
+            <div class="modal-title" id="albumModalTitle">Álbum del plan</div>
+            <button class="modal-close" id="albumModalClose"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="album-grid" id="albumGrid"></div>
+        <button class="album-add-btn" id="albumAddBtn"><i class="fas fa-camera"></i> Agregar fotos</button>
+        <input type="file" id="albumFileInput" accept="image/*" multiple style="display:none" />
+    </div>
+</div>
+
+<!-- MODAL DESARROLLAR IDEA AL AIRE -->
+<div class="modal-overlay" id="airModal">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-header">
+            <div class="modal-title">Desarrollar idea</div>
+            <button class="modal-close" id="airModalClose"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="air-detail-title">
+            <strong id="airDetailTitle">Idea</strong>
+            <span id="airDetailNote"></span>
+        </div>
+        <div class="air-form">
+            <textarea id="airDevelopText" rows="4" placeholder="Agrega detalles, hora, lugar, lo que sea que se te ocurra..."></textarea>
+            <button class="btn-save" id="airDevelopSaveBtn"><i class="fas fa-check"></i> Guardar desarrollo</button>
+            <button class="btn-save" id="airSendToPlanesBtn" style="background: linear-gradient(135deg, #3b6fe0 0%, #16a34a 100%);"><i class="fas fa-heart"></i> Enviar a Planes</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL BIENVENIDA / IDENTIDAD -->
+<div class="modal-overlay" id="whoModal">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-header">
+            <div class="modal-title">¿Quiénes son? 💫</div>
+            <button class="modal-close" id="whoModalClose"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="who-start-label">Ponle nombre e ícono a cada quién, así siempre queda claro quién propuso o eligió cada cosa.</div>
+        <div class="who-fields">
+            <div class="who-field-group">
+                <input type="text" class="who-emoji-input" id="whoEmoji1" value="🙋" maxlength="2" />
+                <input type="text" class="who-name-input" id="whoName1" value="Tú" placeholder="Tu nombre" />
+            </div>
+            <div class="who-field-group">
+                <input type="text" class="who-emoji-input" id="whoEmoji2" value="👩" maxlength="2" />
+                <input type="text" class="who-name-input" id="whoName2" value="Pareja" placeholder="Nombre de tu pareja" />
+            </div>
+        </div>
+        <div class="who-start-label">¿Quién eres tú ahora mismo, usando la app?</div>
+        <div class="who-select-row" id="whoSelectRow">
+            <button class="who-select-btn chosen" id="whoSelectBtn1" data-user="tu"><span class="emoji-big">🙋</span><span id="whoSelectLabel1">Tú</span></button>
+            <button class="who-select-btn" id="whoSelectBtn2" data-user="pareja"><span class="emoji-big">👩</span><span id="whoSelectLabel2">Pareja</span></button>
+        </div>
+        <button class="btn-save" id="whoStartBtn"><i class="fas fa-check"></i> Listo, comenzar</button>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- DATOS DE IDEAS ----------
+        const ideaBank = [
+            { id: 1, title: 'Sushi Experience', emoji: '🍣', proposerKey: 'tu', image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=600&h=600&fit=crop' },
+            { id: 2, title: 'Cine VIP', emoji: '🎬', proposerKey: 'pareja', image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600&h=600&fit=crop' },
+            { id: 3, title: 'Parque Botánico', emoji: '🌳', proposerKey: 'tu', image: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&h=600&fit=crop' },
+            { id: 4, title: 'Museo de Arte', emoji: '🏛️', proposerKey: 'pareja', image: 'https://images.unsplash.com/photo-1554907984-3f5d6c5d5e5c?w=600&h=600&fit=crop' },
+            { id: 5, title: 'Cena Romántica', emoji: '🕯️', proposerKey: 'tu', image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=600&fit=crop' },
+            { id: 6, title: 'Karaoke Night', emoji: '🎤', proposerKey: 'pareja', image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=600&fit=crop' },
+            { id: 7, title: 'Escape Room', emoji: '🔐', proposerKey: 'tu', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85f982?w=600&h=600&fit=crop' },
+            { id: 8, title: 'Piscina & Spa', emoji: '🏊', proposerKey: 'pareja', image: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=600&h=600&fit=crop' },
+        ];
+
+        // ---------- IDENTIDAD: QUIÉN ES QUIÉN ----------
+        let people = { tu: { name: 'Tú', emoji: '🙋' }, pareja: { name: 'Pareja', emoji: '👩' } };
+        let activeUser = 'tu';
+
+        let currentIdeas = [...ideaBank];
+        let chosenId = null;
+        let savedPlans = []; // { id, name, date, dateRaw, photos: [], budget, budgetClass, location, usedPiggy, icon, image }
+        let airIdeas = []; // { id, title, note, developed, developedText }
+        let sortAscending = true;
+        let useIconForPlan = false;
+        let selectedPlanIcon = null;
+        const PLAN_ICONS = ['🎉','🍕','🎬','🌳','🏛️','🕯️','🎤','🔐','🏊','☕','🎮','🎨','🏖️','⛰️','🛍️','🎡'];
+
+        // ---------- TABS ----------
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                document.getElementById('view-' + btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        // ---------- ELEMENTOS ----------
+        const carousel = document.getElementById('carousel');
+        const counterDisplay = document.getElementById('counterDisplay');
+        const matchBanner = document.getElementById('matchBanner');
+        const matchIdeaName = document.getElementById('matchIdeaName');
+        const selectedPlanDisplay = document.getElementById('selectedPlanDisplay');
+        const dateTimePicker = document.getElementById('dateTimePicker');
+        const savePlanBtn = document.getElementById('savePlanBtn');
+        const historyCount = document.getElementById('historyCount');
+        const historyList = document.getElementById('historyList');
+        const addIdeaBtn = document.getElementById('addIdeaBtn');
+        const randomBtn = document.getElementById('randomBtn');
+        const coinBtn = document.getElementById('coinBtn');
+        const locationInput = document.getElementById('locationInput');
+        const planBudgetInput = document.getElementById('planBudgetInput');
+        const planBudgetClass = document.getElementById('planBudgetClass');
+        const usePiggyToggle = document.getElementById('usePiggyToggle');
+        const piggyAvailableHint = document.getElementById('piggyAvailableHint');
+        const iconPickerRow = document.getElementById('iconPickerRow');
+        const iconPickerGrid = document.getElementById('iconPickerGrid');
+        const useImageBtn = document.getElementById('useImageBtn');
+        const useIconBtn = document.getElementById('useIconBtn');
+        const sortByTimeBtn = document.getElementById('sortByTimeBtn');
+        const memoriesCarousel = document.getElementById('memoriesCarousel');
+        // Ideas al aire
+        const airSky = document.getElementById('airSky');
+        const airIdeaTitle = document.getElementById('airIdeaTitle');
+        const airIdeaNote = document.getElementById('airIdeaNote');
+        const airIdeaAddBtn = document.getElementById('airIdeaAddBtn');
+        const airModal = document.getElementById('airModal');
+        const airModalClose = document.getElementById('airModalClose');
+        const airDetailTitle = document.getElementById('airDetailTitle');
+        const airDetailNote = document.getElementById('airDetailNote');
+        const airDevelopText = document.getElementById('airDevelopText');
+        const airDevelopSaveBtn = document.getElementById('airDevelopSaveBtn');
+        const airSendToPlanesBtn = document.getElementById('airSendToPlanesBtn');
+        let activeAirId = null;
+
+        // Identidad
+        const avatarGroup = document.getElementById('avatarGroup');
+        const whoSettingsBtn = document.getElementById('whoSettingsBtn');
+        const activeUserLabel = document.getElementById('activeUserLabel');
+        const switchUserBtn = document.getElementById('switchUserBtn');
+        const whoModal = document.getElementById('whoModal');
+        const whoModalClose = document.getElementById('whoModalClose');
+        const whoEmoji1 = document.getElementById('whoEmoji1');
+        const whoName1 = document.getElementById('whoName1');
+        const whoEmoji2 = document.getElementById('whoEmoji2');
+        const whoName2 = document.getElementById('whoName2');
+        const whoSelectBtn1 = document.getElementById('whoSelectBtn1');
+        const whoSelectBtn2 = document.getElementById('whoSelectBtn2');
+        const whoSelectLabel1 = document.getElementById('whoSelectLabel1');
+        const whoSelectLabel2 = document.getElementById('whoSelectLabel2');
+        const whoStartBtn = document.getElementById('whoStartBtn');
+        let pendingSelectedUser = 'tu';
+
+        function otherUserKey(key) { return key === 'tu' ? 'pareja' : 'tu'; }
+
+        function renderAvatars() {
+            avatarGroup.innerHTML = '';
+            ['tu', 'pareja'].forEach(key => {
+                const a = document.createElement('div');
+                a.className = 'avatar avatar-btn' + (key === activeUser ? ' active' : '');
+                a.textContent = people[key].emoji;
+                a.title = people[key].name;
+                a.addEventListener('click', () => { activeUser = key; renderAvatars(); updateActiveUserLabel(); });
+                avatarGroup.appendChild(a);
+            });
+        }
+
+        function updateActiveUserLabel() {
+            activeUserLabel.textContent = people[activeUser].name;
+        }
+
+        function openWhoModal() {
+            whoEmoji1.value = people.tu.emoji;
+            whoName1.value = people.tu.name;
+            whoEmoji2.value = people.pareja.emoji;
+            whoName2.value = people.pareja.name;
+            pendingSelectedUser = activeUser;
+            updateWhoSelectButtons();
+            whoModal.classList.add('show');
+        }
+        function updateWhoSelectButtons() {
+            whoSelectLabel1.textContent = whoName1.value || 'Tú';
+            whoSelectLabel2.textContent = whoName2.value || 'Pareja';
+            whoSelectBtn1.querySelector('.emoji-big').textContent = whoEmoji1.value || '🙋';
+            whoSelectBtn2.querySelector('.emoji-big').textContent = whoEmoji2.value || '👩';
+            whoSelectBtn1.classList.toggle('chosen', pendingSelectedUser === 'tu');
+            whoSelectBtn2.classList.toggle('chosen', pendingSelectedUser === 'pareja');
+        }
+        [whoName1, whoEmoji1, whoName2, whoEmoji2].forEach(el => el.addEventListener('input', updateWhoSelectButtons));
+        whoSelectBtn1.addEventListener('click', () => { pendingSelectedUser = 'tu'; updateWhoSelectButtons(); });
+        whoSelectBtn2.addEventListener('click', () => { pendingSelectedUser = 'pareja'; updateWhoSelectButtons(); });
+
+        whoStartBtn.addEventListener('click', () => {
+            people.tu.name = whoName1.value.trim() || 'Tú';
+            people.tu.emoji = whoEmoji1.value.trim() || '🙋';
+            people.pareja.name = whoName2.value.trim() || 'Pareja';
+            people.pareja.emoji = whoEmoji2.value.trim() || '👩';
+            activeUser = pendingSelectedUser;
+            renderAvatars();
+            updateActiveUserLabel();
+            renderCards();
+            renderAirSky();
+            renderHistory();
+            whoModal.classList.remove('show');
+            showToast('👋 ¡Listo! Estás como ' + people[activeUser].name);
+        });
+        whoSettingsBtn.addEventListener('click', openWhoModal);
+        whoModalClose.addEventListener('click', () => whoModal.classList.remove('show'));
+        whoModal.addEventListener('click', (e) => { if (e.target === whoModal) whoModal.classList.remove('show'); });
+        switchUserBtn.addEventListener('click', () => {
+            activeUser = otherUserKey(activeUser);
+            renderAvatars();
+            updateActiveUserLabel();
+            showToast('🔄 Ahora estás como ' + people[activeUser].name);
+        });
+
+        function updateCounter() { counterDisplay.textContent = `${currentIdeas.length} 💡`; }
+
+        function renderCards() {
+            carousel.innerHTML = '';
+            currentIdeas.forEach(idea => {
+                const isChosen = idea.id === chosenId;
+                const card = document.createElement('div');
+                card.className = 'card' + (isChosen ? ' chosen' : '');
+                card.dataset.id = idea.id;
+                card.innerHTML = `
+                    <img class="card-image" src="${idea.image}" alt="${idea.title}" loading="lazy" />
+                    <div class="card-gradient"></div>
+                    <div class="chosen-badge"><i class="fas fa-heart"></i> Elegido</div>
+                    <button class="heart-btn${isChosen ? ' filled' : ''}" data-id="${idea.id}">
+                        <i class="${isChosen ? 'fas' : 'far'} fa-heart"></i>
+                    </button>
+                    <div class="card-content">
+                        <div class="card-title">${idea.emoji} ${idea.title}</div>
+                        <div class="card-subtitle"><span><i class="fas fa-user"></i> ${people[idea.proposerKey].name}</span></div>
+                        <div class="card-proposer">${people[idea.proposerKey].emoji} Propuesto por ${people[idea.proposerKey].name}</div>
+                    </div>
+                `;
+                carousel.appendChild(card);
+            });
+            carousel.querySelectorAll('.heart-btn').forEach(btn => {
+                btn.addEventListener('click', () => chooseIdea(Number(btn.dataset.id)));
+            });
+            updateCounter();
+        }
+
+        function chooseIdea(id) {
+            const idea = currentIdeas.find(i => i.id === id);
+            if (!idea) return;
+            chosenId = id;
+            renderCards();
+            const cardEl = carousel.querySelector(`.card[data-id="${id}"]`);
+            if (cardEl) cardEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            selectedPlanDisplay.textContent = idea.title;
+
+            const partnerLikes = Math.random() > 0.4;
+            const otherName = people[otherUserKey(activeUser)].name;
+            if (partnerLikes) {
+                matchIdeaName.textContent = idea.title;
+                matchBanner.classList.add('show');
+                createConfetti();
+                showToast('❤️ ¡Elegiste "' + idea.title + '"! A ' + otherName + ' también le encanta');
+            } else {
+                matchBanner.classList.remove('show');
+                showToast('❤️ Elegiste "' + idea.title + '"');
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+                background: rgba(5,8,20,0.9); backdrop-filter: blur(20px); color: white;
+                padding: 14px 24px; border-radius: 16px; font-weight: 600; font-size: 14px;
+                z-index: 999; border: 1px solid rgba(255,255,255,0.12);
+                animation: slideIn 0.3s ease; max-width: 90%; text-align: center;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 2200);
+        }
+
+        function createConfetti() {
+            const colors = ['#4d8dff', '#8b5cf6', '#7db2ff', '#b794f6', '#3b6fe0', '#a78bfa'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.cssText = `
+                    position: fixed;
+                    width: ${Math.random() * 10 + 4}px; height: ${Math.random() * 10 + 4}px;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+                    left: ${Math.random() * 100}%; top: -10px; z-index: 9999; pointer-events: none;
+                    animation: confettiFall ${Math.random() * 2 + 2}s linear forwards;
+                    animation-delay: ${Math.random() * 0.5}s;
+                    transform: rotate(${Math.random() * 360}deg);
+                `;
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 3000);
+            }
+        }
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = `@keyframes confettiFall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }`;
+        document.head.appendChild(styleSheet);
+
+        addIdeaBtn.addEventListener('click', () => {
+            const newIdea = prompt('✍️ Escribe tu idea de salida:');
+            if (newIdea && newIdea.trim() !== '') {
+                const images = [
+                    'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1558618666-fcd25c85f982?w=600&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=600&h=600&fit=crop',
+                ];
+                const newIdeaObj = {
+                    id: Date.now(),
+                    title: newIdea.trim(),
+                    emoji: ['🍕', '🍔', '🎭', '🏖️', '⛰️', '🛒', '🎨', '🚴'][Math.floor(Math.random() * 8)],
+                    proposerKey: activeUser,
+                    image: images[Math.floor(Math.random() * images.length)]
+                };
+                currentIdeas.push(newIdeaObj);
+                renderCards();
+                const cardEl = carousel.querySelector(`.card[data-id="${newIdeaObj.id}"]`);
+                if (cardEl) cardEl.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+                showToast('✅ Idea agregada: ' + newIdea.trim());
+            }
+        });
+
+        // ---------- BOTÓN ALEATORIO Y MONEDA (para cuando no pueden decidir) ----------
+        randomBtn.addEventListener('click', () => {
+            if (currentIdeas.length === 0) { showToast('⚠️ Agrega ideas primero'); return; }
+            randomBtn.classList.add('spinning');
+            setTimeout(() => {
+                randomBtn.classList.remove('spinning');
+                const pick = currentIdeas[Math.floor(Math.random() * currentIdeas.length)];
+                chooseIdea(pick.id);
+                showToast('🎲 El azar eligió: ' + pick.title);
+            }, 700);
+        });
+
+        coinBtn.addEventListener('click', () => {
+            if (currentIdeas.length < 2) { showToast('⚠️ Necesitas al menos 2 ideas para lanzar la moneda'); return; }
+            const shuffled = [...currentIdeas].sort(() => Math.random() - 0.5);
+            const a = shuffled[0], b = shuffled[1];
+            coinBtn.classList.add('spinning');
+            showToast('🪙 Cara: ' + a.title + ' · Sello: ' + b.title);
+            setTimeout(() => {
+                coinBtn.classList.remove('spinning');
+                const winner = Math.random() > 0.5 ? a : b;
+                chooseIdea(winner.id);
+                showToast('🪙 ¡Salió "' + winner.title + '"!');
+            }, 900);
+        });
+
+        // ---------- ELEGIR IMAGEN O ÍCONO PARA EL PLAN ----------
+        function renderIconPicker() {
+            iconPickerGrid.innerHTML = '';
+            PLAN_ICONS.forEach(icon => {
+                const el = document.createElement('div');
+                el.className = 'icon-choice' + (icon === selectedPlanIcon ? ' selected' : '');
+                el.textContent = icon;
+                el.addEventListener('click', () => {
+                    selectedPlanIcon = icon;
+                    renderIconPicker();
+                });
+                iconPickerGrid.appendChild(el);
+            });
+        }
+        renderIconPicker();
+
+        useImageBtn.addEventListener('click', () => {
+            useIconForPlan = false;
+            useImageBtn.classList.add('active');
+            useIconBtn.classList.remove('active');
+            iconPickerRow.style.display = 'none';
+        });
+        useIconBtn.addEventListener('click', () => {
+            useIconForPlan = true;
+            useIconBtn.classList.add('active');
+            useImageBtn.classList.remove('active');
+            iconPickerRow.style.display = 'block';
+            if (!selectedPlanIcon) { selectedPlanIcon = PLAN_ICONS[0]; renderIconPicker(); }
+        });
+
+        // ---------- GUARDAR PLAN + HISTORIAL ----------
+        function renderHistory() {
+            historyCount.textContent = savedPlans.length;
+            if (savedPlans.length === 0) {
+                historyList.innerHTML = '<div class="empty-history">Aún no hay planes guardados ✨</div>';
+                renderMemories();
+                return;
+            }
+            const list = [...savedPlans].sort((a, b) => {
+                const diff = new Date(a.dateRaw) - new Date(b.dateRaw);
+                return sortAscending ? diff : -diff;
+            });
+            historyList.innerHTML = '';
+            list.forEach(plan => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                const budgetChip = plan.budget ? `<span class="plan-meta-chip budget"><i class="fas fa-tag"></i> ${plan.budgetClass} · ${formatMoney(plan.budget)}</span>` : '';
+                const piggyChip = plan.usedPiggy ? `<span class="plan-meta-chip piggy"><i class="fas fa-piggy-bank"></i> Con alcancía</span>` : '';
+                const locationChip = plan.location ? `<span class="plan-meta-chip"><i class="fas fa-map-marker-alt"></i> ${plan.location}</span>` : '';
+                const savedByChip = plan.savedBy ? `<span class="plan-meta-chip">${people[plan.savedBy].emoji} ${people[plan.savedBy].name}</span>` : '';
+                item.innerHTML = `
+                    <span class="plan-icon">${plan.icon ? plan.icon : '<i class="fas fa-check-circle" style="color:#4d8dff;"></i>'}</span>
+                    <div class="plan-main">
+                        <div class="plan-name-row">
+                            <span class="plan-name">${plan.name}</span>
+                            <span class="date">${plan.date}</span>
+                        </div>
+                        <div class="plan-meta-row">${budgetChip}${piggyChip}${locationChip}${savedByChip}</div>
+                    </div>
+                    <button class="album-btn" data-plan-id="${plan.id}">
+                        <i class="fas fa-images"></i> Álbum <span class="count">${plan.photos.length}</span>
+                    </button>
+                `;
+                historyList.appendChild(item);
+            });
+            historyList.querySelectorAll('.album-btn').forEach(btn => {
+                btn.addEventListener('click', () => openAlbum(Number(btn.dataset.planId)));
+            });
+            renderMemories();
+        }
+
+        sortByTimeBtn.addEventListener('click', () => {
+            sortAscending = !sortAscending;
+            sortByTimeBtn.innerHTML = `<i class="fas fa-sort-${sortAscending ? 'amount-up' : 'amount-down'}"></i> Por tiempo`;
+            renderHistory();
+        });
+
+        // ---------- RECUERDOS (carrusel de todas las fotos) ----------
+        function renderMemories() {
+            const allPhotos = [];
+            savedPlans.forEach(plan => {
+                plan.photos.forEach(photo => allPhotos.push({ ...photo, planName: plan.name }));
+            });
+            if (allPhotos.length === 0) {
+                memoriesCarousel.innerHTML = '<div class="empty-history">Aún no hay recuerdos guardados 📷</div>';
+                return;
+            }
+            memoriesCarousel.innerHTML = '';
+            allPhotos.forEach(photo => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.innerHTML = `<img src="${photo.src}" alt="recuerdo" />
+                    <div class="memory-caption">${photo.caption ? photo.caption : photo.planName}</div>`;
+                memoriesCarousel.appendChild(card);
+            });
+        }
+
+        savePlanBtn.addEventListener('click', () => {
+            const planName = selectedPlanDisplay.textContent;
+            if (!planName || planName === 'Ninguno') { showToast('⚠️ Primero elige una idea tocando el corazón'); return; }
+            const dateVal = dateTimePicker.value;
+            if (!dateVal) { showToast('⚠️ Selecciona una fecha y hora'); return; }
+            const formattedDate = new Date(dateVal).toLocaleString('es-ES', {
+                weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+            });
+
+            const budget = Number(planBudgetInput.value) || 0;
+            const usedPiggy = usePiggyToggle.checked;
+            if (usedPiggy) {
+                if (piggy.saved <= 0) {
+                    showToast('⚠️ Tu alcancía está vacía todavía');
+                    return;
+                }
+                const deduction = budget > 0 ? Math.min(budget, piggy.saved) : piggy.saved;
+                piggy.saved -= deduction;
+                renderPiggy();
+                showToast('🐷 Se descontaron ' + formatMoney(deduction) + ' de la alcancía');
+            }
+
+            const chosenIdea = currentIdeas.find(i => i.title === planName);
+            const planIcon = useIconForPlan ? (selectedPlanIcon || '🎉') : null;
+            const planImage = (!useIconForPlan && chosenIdea) ? chosenIdea.image : null;
+
+            savedPlans.push({
+                id: Date.now(),
+                name: planName,
+                date: formattedDate,
+                dateRaw: dateVal,
+                photos: [],
+                budget: budget,
+                budgetClass: planBudgetClass.value,
+                location: locationInput.value.trim(),
+                usedPiggy: usedPiggy,
+                icon: planIcon,
+                image: planImage,
+                savedBy: activeUser
+            });
+            renderHistory();
+            selectedPlanDisplay.textContent = 'Ninguno';
+            matchBanner.classList.remove('show');
+            locationInput.value = '';
+            planBudgetInput.value = '';
+            usePiggyToggle.checked = false;
+            showToast('📅 ¡Salida guardada! Podrás agregarle fotos en su álbum.');
+        });
+
+        window.scrollToCalendar = function() {
+            document.getElementById('calendarSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+
+        // ---------- ÁLBUM (MODAL) ----------
+        const albumModal = document.getElementById('albumModal');
+        const albumModalTitle = document.getElementById('albumModalTitle');
+        const albumGrid = document.getElementById('albumGrid');
+        const albumAddBtn = document.getElementById('albumAddBtn');
+        const albumFileInput = document.getElementById('albumFileInput');
+        const albumModalClose = document.getElementById('albumModalClose');
+        let activePlanId = null;
+
+        function openAlbum(planId) {
+            activePlanId = planId;
+            const plan = savedPlans.find(p => p.id === planId);
+            if (!plan) return;
+            albumModalTitle.textContent = 'Álbum · ' + plan.name;
+            renderAlbumGrid(plan);
+            albumModal.classList.add('show');
+        }
+
+        function renderAlbumGrid(plan) {
+            albumGrid.innerHTML = '';
+            if (plan.photos.length === 0) {
+                albumGrid.innerHTML = '<div class="album-empty">Aún no hay fotos de este plan 📷<br>¡Agrega los recuerdos!</div>';
+                return;
+            }
+            plan.photos.forEach((photo, idx) => {
+                const cell = document.createElement('div');
+                cell.className = 'album-photo';
+                cell.innerHTML = `<img src="${photo.src}" alt="foto ${idx+1}" /><button class="remove-photo" data-idx="${idx}"><i class="fas fa-times"></i></button>`;
+                albumGrid.appendChild(cell);
+            });
+            albumGrid.querySelectorAll('.remove-photo').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const plan = savedPlans.find(p => p.id === activePlanId);
+                    plan.photos.splice(Number(btn.dataset.idx), 1);
+                    renderAlbumGrid(plan);
+                    renderHistory();
+                });
+            });
+        }
+
+        albumAddBtn.addEventListener('click', () => albumFileInput.click());
+
+        albumFileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files || []);
+            if (files.length === 0) return;
+            const plan = savedPlans.find(p => p.id === activePlanId);
+            if (!plan) return;
+            const caption = prompt('✍️ Descripción para este recuerdo (opcional):', plan.name) || '';
+            let pending = files.length;
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    plan.photos.push({ src: ev.target.result, caption: caption.trim() });
+                    pending--;
+                    if (pending === 0) {
+                        renderAlbumGrid(plan);
+                        renderHistory();
+                        showToast('📸 Fotos agregadas al álbum y al carrusel de recuerdos');
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+            albumFileInput.value = '';
+        });
+
+        albumModalClose.addEventListener('click', () => albumModal.classList.remove('show'));
+        albumModal.addEventListener('click', (e) => { if (e.target === albumModal) albumModal.classList.remove('show'); });
+
+        // ---------- IDEAS AL AIRE ----------
+        function renderAirSky() {
+            if (airIdeas.length === 0) {
+                airSky.innerHTML = '<div class="air-empty">Aún no hay ideas flotando por aquí ☁️</div>';
+                return;
+            }
+            airSky.innerHTML = '';
+            airIdeas.forEach((idea, i) => {
+                const bubble = document.createElement('div');
+                const isStar = i % 2 === 1;
+                bubble.className = 'air-bubble' + (isStar ? ' star' : '') + (idea.developed ? ' developed' : '');
+                bubble.dataset.id = idea.id;
+                // posición pseudo-aleatoria pero estable, distribuida por la caja
+                const seed = (idea.id % 1000) / 1000;
+                const left = 6 + ((i * 37 + seed * 20) % 78);
+                const top = 6 + ((i * 53 + seed * 30) % 72);
+                bubble.style.left = left + '%';
+                bubble.style.top = top + '%';
+                bubble.style.animationDelay = (seed * 2) + 's';
+                bubble.innerHTML = `
+                    <div class="shape">${isStar ? '✨' : '☁️'}</div>
+                    <div class="label">${idea.title}</div>
+                    <div class="proposer-tag">${people[idea.proposerKey].emoji} ${people[idea.proposerKey].name}</div>
+                `;
+                bubble.addEventListener('click', () => openAirIdea(idea.id));
+                airSky.appendChild(bubble);
+            });
+        }
+
+        airIdeaAddBtn.addEventListener('click', () => {
+            const title = airIdeaTitle.value.trim();
+            if (!title) { showToast('⚠️ Escribe al menos un título para tu idea'); return; }
+            airIdeas.push({ id: Date.now(), title, note: airIdeaNote.value.trim(), developed: false, developedText: '', proposerKey: activeUser });
+            airIdeaTitle.value = '';
+            airIdeaNote.value = '';
+            renderAirSky();
+            showToast('☁️ Idea soltada al aire, ¡a ver quién la desarrolla!');
+        });
+
+        function openAirIdea(id) {
+            activeAirId = id;
+            const idea = airIdeas.find(a => a.id === id);
+            if (!idea) return;
+            airDetailTitle.textContent = idea.title;
+            airDetailNote.textContent = (idea.note ? idea.note + ' · ' : '') + 'Soltada por ' + people[idea.proposerKey].name;
+            airDevelopText.value = idea.developedText || '';
+            airModal.classList.add('show');
+        }
+
+        airModalClose.addEventListener('click', () => airModal.classList.remove('show'));
+        airModal.addEventListener('click', (e) => { if (e.target === airModal) airModal.classList.remove('show'); });
+
+        airDevelopSaveBtn.addEventListener('click', () => {
+            const idea = airIdeas.find(a => a.id === activeAirId);
+            if (!idea) return;
+            idea.developedText = airDevelopText.value.trim();
+            idea.developed = idea.developedText.length > 0;
+            renderAirSky();
+            airModal.classList.remove('show');
+            showToast('✅ Idea desarrollada, ya se ve distinta en el cielo');
+        });
+
+        airSendToPlanesBtn.addEventListener('click', () => {
+            const idea = airIdeas.find(a => a.id === activeAirId);
+            if (!idea) return;
+            const images = [
+                'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1558618666-fcd25c85f982?w=600&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=600&h=600&fit=crop',
+            ];
+            const newIdeaObj = {
+                id: Date.now(),
+                title: idea.title,
+                emoji: ['🍕', '🍔', '🎭', '🏖️', '⛰️', '🛒', '🎨', '🚴'][Math.floor(Math.random() * 8)],
+                proposerKey: activeUser,
+                image: images[Math.floor(Math.random() * images.length)]
+            };
+            currentIdeas.push(newIdeaObj);
+            airIdeas = airIdeas.filter(a => a.id !== idea.id);
+            renderAirSky();
+            airModal.classList.remove('show');
+            tabBtns.forEach(b => b.classList.remove('active'));
+            document.querySelector('.tab-btn[data-tab="planes"]').classList.add('active');
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-planes').classList.add('active');
+            renderCards();
+            showToast('🚀 "' + idea.title + '" ahora está en Planes para elegir');
+        });
+
+        // ---------- ALCANCÍA ----------
+        let piggy = { goal: 0, rate: 0, saved: 0, days: 0, log: [] };
+
+        const goalInput = document.getElementById('goalInput');
+        const rateInput = document.getElementById('rateInput');
+        const piggyTotal = document.getElementById('piggyTotal');
+        const piggyGoalDisplay = document.getElementById('piggyGoalDisplay');
+        const progressFill = document.getElementById('progressFill');
+        const progressCaption = document.getElementById('progressCaption');
+        const statDays = document.getElementById('statDays');
+        const statRemaining = document.getElementById('statRemaining');
+        const saveTodayBtn = document.getElementById('saveTodayBtn');
+        const piggyLogList = document.getElementById('piggyLogList');
+        const logCount = document.getElementById('logCount');
+
+        function formatMoney(n) {
+            return '$' + Math.round(n).toLocaleString('es-CO');
+        }
+
+        function renderPiggy() {
+            piggyTotal.textContent = formatMoney(piggy.saved);
+            piggyGoalDisplay.textContent = formatMoney(piggy.goal);
+            const pct = piggy.goal > 0 ? Math.min(100, (piggy.saved / piggy.goal) * 100) : 0;
+            progressFill.style.width = pct + '%';
+            progressCaption.textContent = pct.toFixed(0) + '% ahorrado';
+            statDays.textContent = piggy.days;
+            if (piggy.rate > 0 && piggy.goal > piggy.saved) {
+                statRemaining.textContent = Math.ceil((piggy.goal - piggy.saved) / piggy.rate);
+            } else if (piggy.goal > 0 && piggy.saved >= piggy.goal) {
+                statRemaining.textContent = '¡Lista! 🎉';
+            } else {
+                statRemaining.textContent = '—';
+            }
+
+            if (piggyAvailableHint) piggyAvailableHint.textContent = 'Disponible: ' + formatMoney(piggy.saved);
+
+            logCount.textContent = piggy.log.length;
+            if (piggy.log.length === 0) {
+                piggyLogList.innerHTML = '<div class="empty-history">Aún no registras ahorros 🐷</div>';
+            } else {
+                piggyLogList.innerHTML = '';
+                [...piggy.log].reverse().forEach(entry => {
+                    const item = document.createElement('div');
+                    item.className = 'piggy-log-item';
+                    item.innerHTML = `<span>Día ${entry.day}</span><span>${formatMoney(entry.amount)}</span>`;
+                    piggyLogList.appendChild(item);
+                });
+            }
+        }
+
+        goalInput.addEventListener('input', () => {
+            piggy.goal = Number(goalInput.value) || 0;
+            renderPiggy();
+        });
+        rateInput.addEventListener('input', () => {
+            piggy.rate = Number(rateInput.value) || 0;
+            renderPiggy();
+        });
+
+        saveTodayBtn.addEventListener('click', () => {
+            if (piggy.rate <= 0) { showToast('⚠️ Define primero tu tasa diaria fija'); return; }
+            if (piggy.goal > 0 && piggy.saved >= piggy.goal) { showToast('🎉 ¡Ya alcanzaron su meta!'); return; }
+            piggy.days += 1;
+            piggy.saved += piggy.rate;
+            if (piggy.goal > 0 && piggy.saved > piggy.goal) piggy.saved = piggy.goal;
+            piggy.log.push({ day: piggy.days, amount: piggy.rate });
+            renderPiggy();
+            if (piggy.goal > 0 && piggy.saved >= piggy.goal) {
+                createConfetti();
+                showToast('🎉 ¡Llegaron a la meta de ahorro!');
+            } else {
+                showToast('🐷 Ahorro de hoy registrado: ' + formatMoney(piggy.rate));
+            }
+        });
+
+        // ---------- INICIALIZAR ----------
+        function init() {
+            currentIdeas = [...ideaBank];
+            chosenId = null;
+            renderAvatars();
+            updateActiveUserLabel();
+            renderCards();
+            dateTimePicker.value = '2026-08-30T19:30';
+            savedPlans = [];
+            airIdeas = [];
+            renderAirSky();
+            renderHistory();
+            selectedPlanDisplay.textContent = 'Ninguno';
+            matchBanner.classList.remove('show');
+            renderPiggy();
+            openWhoModal();
+        }
+        init();
+    })();
+</script>
+</body>
+</html>
