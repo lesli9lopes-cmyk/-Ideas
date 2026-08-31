@@ -280,6 +280,10 @@
         .versus-title { color: #fca5a5; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 8px; }
         .versus-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .versus-side { flex: 1; color: white; font-weight: 700; font-size: 13.5px; background: rgba(255,255,255,0.06); padding: 8px 12px; border-radius: 12px; text-align: center; }
+        .versus-heart-btn { border: 1px solid rgba(255,255,255,0.14); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; transition: transform 0.15s ease, background 0.15s ease; }
+        .versus-heart-btn i { color: #fb7185; }
+        .versus-heart-btn:hover { background: rgba(251,113,133,0.16); transform: translateY(-1px); }
+        .versus-heart-btn:active { transform: scale(0.96); }
         .versus-vs { color: #fca5a5; font-weight: 900; font-size: 13px; }
         .versus-hint { color: rgba(255,255,255,0.5); font-size: 11.5px; text-align: center; }
 
@@ -689,11 +693,11 @@
         <div class="versus-banner" id="versusBanner">
             <div class="versus-title"><i class="fas fa-bolt"></i> ¡Eligieron diferente! Resuélvanlo:</div>
             <div class="versus-row">
-                <span class="versus-side" id="versusIdeaA">Tú: Sushi</span>
+                <button class="versus-side versus-heart-btn" id="versusIdeaA"><i class="fas fa-heart"></i> <span>Tú: Sushi</span></button>
                 <span class="versus-vs">VS</span>
-                <span class="versus-side" id="versusIdeaB">Pareja: Cine</span>
+                <button class="versus-side versus-heart-btn" id="versusIdeaB"><i class="fas fa-heart"></i> <span>Pareja: Cine</span></button>
             </div>
-            <div class="versus-hint">Toca el dado 🎲 o la moneda 🪙 de arriba para decidir entre estas dos</div>
+            <div class="versus-hint">Toca un corazón para elegir directo, o el dado 🎲 / la moneda 🪙 de arriba para decidir al azar</div>
         </div>
 
         <div class="calendar-section" id="calendarSection">
@@ -1224,10 +1228,12 @@
                 const ideaA = currentIdeas.find(i => i.id === a);
                 const ideaB = currentIdeas.find(i => i.id === b);
                 if (ideaA && ideaB) {
-                    versusIdeaA.textContent = people.tu.emoji + ' ' + ideaA.title;
-                    versusIdeaB.textContent = people.pareja.emoji + ' ' + ideaB.title;
+                    versusIdeaA.querySelector('span').textContent = people.tu.emoji + ' ' + ideaA.title;
+                    versusIdeaB.querySelector('span').textContent = people.pareja.emoji + ' ' + ideaB.title;
+                    versusIdeaA.dataset.ideaId = ideaA.id;
+                    versusIdeaB.dataset.ideaId = ideaB.id;
                     versusBanner.classList.add('show');
-                    if (fromUserAction) showToast('⚔️ Eligieron diferente: toca dado o moneda para el versus');
+                    if (fromUserAction) showToast('⚔️ Eligieron diferente: toca un corazón, el dado 🎲 o la moneda 🪙 para el versus');
                 }
             } else {
                 matchBanner.classList.remove('show');
@@ -1256,6 +1262,16 @@
             showToast('🏆 ¡Ganó "' + idea.title + '"! Ya quedó elegido para los dos');
             renderCards();
         }
+
+        // Elegir directo con el corazón dentro del versus (sin dado ni moneda)
+        versusIdeaA.addEventListener('click', () => {
+            const id = Number(versusIdeaA.dataset.ideaId);
+            if (id) resolveVersus(id);
+        });
+        versusIdeaB.addEventListener('click', () => {
+            const id = Number(versusIdeaB.dataset.ideaId);
+            if (id) resolveVersus(id);
+        });
 
         function showToast(message) {
             const toast = document.createElement('div');
@@ -1460,6 +1476,21 @@
             const ok = confirm('¿Borrar el plan "' + plan.name + '"? Esto también borrará sus fotos y no se puede deshacer.');
             if (!ok) return;
             savedPlans = savedPlans.filter(p => p.id !== planId);
+
+            // Si la idea de este plan seguía marcada como "Elegida"/match, la liberamos
+            // para que la card vuelva a quedar disponible para elegir de nuevo.
+            const relatedIdea = currentIdeas.find(i => i.title === plan.name);
+            if (relatedIdea && finalChosenId === relatedIdea.id) {
+                finalChosenId = null;
+                chosenBy.tu = null;
+                chosenBy.pareja = null;
+                matchBanner.classList.remove('show');
+                versusBanner.classList.remove('show');
+                selectedPlanDisplay.textContent = 'Ninguno';
+                pushChosen();
+                renderCards();
+            }
+
             pushSavedPlans();
             renderHistory();
             showToast('🗑️ Plan borrado');
@@ -1534,13 +1565,22 @@
                 savedBy: activeUser
             });
             pushSavedPlans();
+
+            // Liberamos la elección actual para poder armar un nuevo plan desde cero.
+            finalChosenId = null;
+            chosenBy.tu = null;
+            chosenBy.pareja = null;
+            pushChosen();
+            renderCards();
+
             renderHistory();
             selectedPlanDisplay.textContent = 'Ninguno';
             matchBanner.classList.remove('show');
+            versusBanner.classList.remove('show');
             locationInput.value = '';
             planBudgetInput.value = '';
             usePiggyToggle.checked = false;
-            showToast('📅 ¡Salida guardada! Podrás agregarle fotos en su álbum.');
+            showToast('📅 ¡Salida guardada! Podrás agregarle fotos en su álbum. Ya puedes elegir otra idea para un nuevo plan.');
         });
 
         window.scrollToCalendar = function() {
