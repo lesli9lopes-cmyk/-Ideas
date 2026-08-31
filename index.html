@@ -6,6 +6,8 @@
     <title>La Fuente de Hipocrene</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -876,6 +878,71 @@
         let people = { tu: { name: 'Jhefersony', emoji: '🙋‍♂️' }, pareja: { name: 'Yesly', emoji: '👩' } };
         let activeUser = 'tu';
 
+        // ---------- SINCRONIZACIÓN EN TIEMPO REAL (FIREBASE) ----------
+        // 1) Crea un proyecto gratis en https://console.firebase.google.com
+        // 2) Activa "Realtime Database" (modo prueba)
+        // 3) Pega aquí los datos de configuración de tu proyecto (Configuración del proyecto > tus apps > SDK)
+        const firebaseConfig = {
+            apiKey: "PEGA_TU_API_KEY",
+            authDomain: "PEGA_TU_PROYECTO.firebaseapp.com",
+            databaseURL: "https://PEGA_TU_PROYECTO-default-rtdb.firebaseio.com",
+            projectId: "PEGA_TU_PROYECTO",
+            storageBucket: "PEGA_TU_PROYECTO.appspot.com",
+            messagingSenderId: "000000000000",
+            appId: "PEGA_TU_APP_ID"
+        };
+        const FIREBASE_ENABLED = firebaseConfig.apiKey !== "PEGA_TU_API_KEY";
+        let db = null;
+
+        function pushIdeas() { if (db) db.child('ideas').set(currentIdeas); }
+        function pushChosen() { if (db) db.child('chosenId').set(chosenId); }
+        function pushSavedPlans() { if (db) db.child('savedPlans').set(savedPlans); }
+        function pushAirIdeas() { if (db) db.child('airIdeas').set(airIdeas); }
+        function pushPiggy() { if (db) db.child('piggy').set(piggy); }
+        function pushPeople() { if (db) db.child('people').set(people); }
+
+        function applyRemoteState(data) {
+            people = data.people || people;
+            currentIdeas = data.ideas || currentIdeas;
+            chosenId = (data.chosenId !== undefined) ? data.chosenId : chosenId;
+            savedPlans = data.savedPlans || [];
+            airIdeas = data.airIdeas || [];
+            piggy = data.piggy || piggy;
+            renderAvatars();
+            updateActiveUserLabel();
+            renderCards();
+            renderHistory();
+            renderAirSky();
+            renderPiggy();
+            if (chosenId) {
+                const idea = currentIdeas.find(i => i.id === chosenId);
+                if (idea) selectedPlanDisplay.textContent = idea.title;
+            }
+        }
+
+        function seedRemoteState() {
+            db.set({ people, ideas: currentIdeas, chosenId, savedPlans, airIdeas, piggy });
+        }
+
+        function initFirebaseSync() {
+            if (!FIREBASE_ENABLED) {
+                console.log('Firebase no configurado: la app solo guarda datos en este dispositivo.');
+                return;
+            }
+            try {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.database().ref('hipocrene');
+                db.on('value', (snap) => {
+                    const data = snap.val();
+                    if (!data) { seedRemoteState(); return; }
+                    applyRemoteState(data);
+                });
+            } catch (e) {
+                console.error(e);
+                showToast('⚠️ No se pudo conectar la sincronización compartida');
+            }
+        }
+
         let currentIdeas = [...ideaBank];
         let chosenId = null;
         let savedPlans = []; // { id, name, date, dateRaw, photos: [], budget, budgetClass, location, usedPiggy, icon, image }
@@ -961,7 +1028,7 @@
                 a.className = 'avatar avatar-btn' + (key === activeUser ? ' active' : '');
                 a.textContent = people[key].emoji;
                 a.title = people[key].name;
-                a.addEventListener('click', () => { activeUser = key; renderAvatars(); updateActiveUserLabel(); });
+                a.addEventListener('click', () => { activeUser = key; localStorage.setItem('hipocrene_who', key); renderAvatars(); updateActiveUserLabel(); });
                 avatarGroup.appendChild(a);
             });
         }
@@ -997,11 +1064,13 @@
             people.pareja.name = whoName2.value.trim() || 'Yesly';
             people.pareja.emoji = whoEmoji2.value.trim() || '👩';
             activeUser = pendingSelectedUser;
+            localStorage.setItem('hipocrene_who', activeUser);
             renderAvatars();
             updateActiveUserLabel();
             renderCards();
             renderAirSky();
             renderHistory();
+            pushPeople();
             whoModal.classList.remove('show');
             showToast('👋 ¡Listo! Estás como ' + people[activeUser].name);
         });
@@ -1010,6 +1079,7 @@
         whoModal.addEventListener('click', (e) => { if (e.target === whoModal) whoModal.classList.remove('show'); });
         switchUserBtn.addEventListener('click', () => {
             activeUser = otherUserKey(activeUser);
+            localStorage.setItem('hipocrene_who', activeUser);
             renderAvatars();
             updateActiveUserLabel();
             showToast('🔄 Ahora estás como ' + people[activeUser].name);
@@ -1049,6 +1119,7 @@
             const idea = currentIdeas.find(i => i.id === id);
             if (!idea) return;
             chosenId = id;
+            pushChosen();
             renderCards();
             const cardEl = carousel.querySelector(`.card[data-id="${id}"]`);
             if (cardEl) cardEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
@@ -1124,6 +1195,7 @@
                     image: images[Math.floor(Math.random() * images.length)]
                 };
                 currentIdeas.push(newIdeaObj);
+                pushIdeas();
                 renderCards();
                 const cardEl = carousel.querySelector(`.card[data-id="${newIdeaObj.id}"]`);
                 if (cardEl) cardEl.scrollIntoView({ behavior: 'smooth', inline: 'center' });
@@ -1272,6 +1344,7 @@
                 }
                 const deduction = budget > 0 ? Math.min(budget, piggy.saved) : piggy.saved;
                 piggy.saved -= deduction;
+                pushPiggy();
                 renderPiggy();
                 showToast('🐷 Se descontaron ' + formatMoney(deduction) + ' de la alcancía');
             }
@@ -1294,6 +1367,7 @@
                 image: planImage,
                 savedBy: activeUser
             });
+            pushSavedPlans();
             renderHistory();
             selectedPlanDisplay.textContent = 'Ninguno';
             matchBanner.classList.remove('show');
@@ -1341,6 +1415,7 @@
                 btn.addEventListener('click', () => {
                     const plan = savedPlans.find(p => p.id === activePlanId);
                     plan.photos.splice(Number(btn.dataset.idx), 1);
+                    pushSavedPlans();
                     renderAlbumGrid(plan);
                     renderHistory();
                 });
@@ -1362,6 +1437,7 @@
                     plan.photos.push({ src: ev.target.result, caption: caption.trim() });
                     pending--;
                     if (pending === 0) {
+                        pushSavedPlans();
                         renderAlbumGrid(plan);
                         renderHistory();
                         showToast('📸 Fotos agregadas al álbum y al carrusel de recuerdos');
@@ -1408,6 +1484,7 @@
             const title = airIdeaTitle.value.trim();
             if (!title) { showToast('⚠️ Escribe al menos un título para tu idea'); return; }
             airIdeas.push({ id: Date.now(), title, note: airIdeaNote.value.trim(), developed: false, developedText: '', proposerKey: activeUser });
+            pushAirIdeas();
             airIdeaTitle.value = '';
             airIdeaNote.value = '';
             renderAirSky();
@@ -1432,6 +1509,7 @@
             if (!idea) return;
             idea.developedText = airDevelopText.value.trim();
             idea.developed = idea.developedText.length > 0;
+            pushAirIdeas();
             renderAirSky();
             airModal.classList.remove('show');
             showToast('✅ Idea desarrollada, ya se ve distinta en el cielo');
@@ -1454,7 +1532,9 @@
                 image: images[Math.floor(Math.random() * images.length)]
             };
             currentIdeas.push(newIdeaObj);
+            pushIdeas();
             airIdeas = airIdeas.filter(a => a.id !== idea.id);
+            pushAirIdeas();
             renderAirSky();
             airModal.classList.remove('show');
             tabBtns.forEach(b => b.classList.remove('active'));
@@ -1515,8 +1595,18 @@
             }
         }
 
+        goalInput.addEventListener('change', () => {
+            piggy.goal = Number(goalInput.value) || 0;
+            pushPiggy();
+            renderPiggy();
+        });
         goalInput.addEventListener('input', () => {
             piggy.goal = Number(goalInput.value) || 0;
+            renderPiggy();
+        });
+        rateInput.addEventListener('change', () => {
+            piggy.rate = Number(rateInput.value) || 0;
+            pushPiggy();
             renderPiggy();
         });
         rateInput.addEventListener('input', () => {
@@ -1531,6 +1621,7 @@
             piggy.saved += piggy.rate;
             if (piggy.goal > 0 && piggy.saved > piggy.goal) piggy.saved = piggy.goal;
             piggy.log.push({ day: piggy.days, amount: piggy.rate });
+            pushPiggy();
             renderPiggy();
             if (piggy.goal > 0 && piggy.saved >= piggy.goal) {
                 createConfetti();
@@ -1542,20 +1633,32 @@
 
         // ---------- INICIALIZAR ----------
         function init() {
+            dateTimePicker.value = '2026-08-30T19:30';
             currentIdeas = [...ideaBank];
             chosenId = null;
+            savedPlans = [];
+            airIdeas = [];
+
+            const rememberedUser = localStorage.getItem('hipocrene_who');
+
             renderAvatars();
             updateActiveUserLabel();
             renderCards();
-            dateTimePicker.value = '2026-08-30T19:30';
-            savedPlans = [];
-            airIdeas = [];
-            renderAirSky();
             renderHistory();
+            renderAirSky();
+            renderPiggy();
             selectedPlanDisplay.textContent = 'Ninguno';
             matchBanner.classList.remove('show');
-            renderPiggy();
-            openWhoModal();
+
+            if (rememberedUser === 'tu' || rememberedUser === 'pareja') {
+                activeUser = rememberedUser;
+                renderAvatars();
+                updateActiveUserLabel();
+            } else {
+                openWhoModal();
+            }
+
+            initFirebaseSync();
         }
         init();
     })();
