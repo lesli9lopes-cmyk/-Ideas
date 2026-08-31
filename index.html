@@ -414,6 +414,13 @@
         }
         .album-btn:hover { background: rgba(139,92,246,0.35); }
         .album-btn .count { background: rgba(255,255,255,0.15); padding: 1px 6px; border-radius: 8px; }
+        .delete-plan-btn {
+            width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(239,68,68,0.3);
+            background: rgba(239,68,68,0.12); color: #f87171; cursor: pointer; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 13px; transition: 0.2s;
+        }
+        .delete-plan-btn:hover { background: rgba(239,68,68,0.28); transform: scale(1.06); }
+        .history-item-actions { display: flex; align-items: center; gap: 8px; }
         .empty-history { color: rgba(255,255,255,0.3); font-size: 14px; text-align: center; padding: 12px; }
 
         /* ALCANCÍA */
@@ -883,13 +890,13 @@
         // 2) Activa "Realtime Database" (modo prueba)
         // 3) Pega aquí los datos de configuración de tu proyecto (Configuración del proyecto > tus apps > SDK)
         const firebaseConfig = {
-            apiKey: "PEGA_TU_API_KEY",
-            authDomain: "PEGA_TU_PROYECTO.firebaseapp.com",
-            databaseURL: "https://PEGA_TU_PROYECTO-default-rtdb.firebaseio.com",
-            projectId: "PEGA_TU_PROYECTO",
-            storageBucket: "PEGA_TU_PROYECTO.appspot.com",
-            messagingSenderId: "000000000000",
-            appId: "PEGA_TU_APP_ID"
+            apiKey: "AIzaSyCscqm_fWO73EBEOZCk1FZhqdZmZ9bUDrc",
+            authDomain: "ideas-c2d89.firebaseapp.com",
+            databaseURL: "https://ideas-c2d89-default-rtdb.firebaseio.com",
+            projectId: "ideas-c2d89",
+            storageBucket: "ideas-c2d89.firebasestorage.app",
+            messagingSenderId: "391024895977",
+            appId: "1:391024895977:web:90dd144443642e0ff54d78"
         };
         const FIREBASE_ENABLED = firebaseConfig.apiKey !== "PEGA_TU_API_KEY";
         let db = null;
@@ -926,20 +933,28 @@
 
         function initFirebaseSync() {
             if (!FIREBASE_ENABLED) {
-                console.log('Firebase no configurado: la app solo guarda datos en este dispositivo.');
+                setTimeout(() => showToast('⚠️ Sin conexión compartida todavía: falta configurar Firebase (los datos no se guardan)'), 600);
                 return;
             }
             try {
                 firebase.initializeApp(firebaseConfig);
                 db = firebase.database().ref('hipocrene');
+                let firstConnect = true;
                 db.on('value', (snap) => {
                     const data = snap.val();
+                    if (firstConnect) {
+                        firstConnect = false;
+                        showToast('🔗 Conectado: la información se guarda y comparte de verdad');
+                    }
                     if (!data) { seedRemoteState(); return; }
                     applyRemoteState(data);
+                }, (err) => {
+                    console.error(err);
+                    showToast('⚠️ Error de conexión: revisa las reglas de tu Realtime Database');
                 });
             } catch (e) {
                 console.error(e);
-                showToast('⚠️ No se pudo conectar la sincronización compartida');
+                showToast('⚠️ No se pudo conectar: revisa que copiaste bien los datos de Firebase');
             }
         }
 
@@ -1288,16 +1303,35 @@
                         </div>
                         <div class="plan-meta-row">${budgetChip}${piggyChip}${locationChip}${savedByChip}</div>
                     </div>
-                    <button class="album-btn" data-plan-id="${plan.id}">
-                        <i class="fas fa-images"></i> Álbum <span class="count">${plan.photos.length}</span>
-                    </button>
+                    <div class="history-item-actions">
+                        <button class="album-btn" data-plan-id="${plan.id}">
+                            <i class="fas fa-images"></i> Álbum <span class="count">${plan.photos.length}</span>
+                        </button>
+                        <button class="delete-plan-btn" data-plan-id="${plan.id}" title="Borrar plan">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 `;
                 historyList.appendChild(item);
             });
             historyList.querySelectorAll('.album-btn').forEach(btn => {
                 btn.addEventListener('click', () => openAlbum(Number(btn.dataset.planId)));
             });
+            historyList.querySelectorAll('.delete-plan-btn').forEach(btn => {
+                btn.addEventListener('click', () => deletePlan(Number(btn.dataset.planId)));
+            });
             renderMemories();
+        }
+
+        function deletePlan(planId) {
+            const plan = savedPlans.find(p => p.id === planId);
+            if (!plan) return;
+            const ok = confirm('¿Borrar el plan "' + plan.name + '"? Esto también borrará sus fotos y no se puede deshacer.');
+            if (!ok) return;
+            savedPlans = savedPlans.filter(p => p.id !== planId);
+            pushSavedPlans();
+            renderHistory();
+            showToast('🗑️ Plan borrado');
         }
 
         sortByTimeBtn.addEventListener('click', () => {
