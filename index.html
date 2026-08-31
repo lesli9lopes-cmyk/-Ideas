@@ -269,6 +269,30 @@
         }
         .match-banner-right button:hover { background: rgba(255,255,255,0.3); }
 
+        /* VERSUS BANNER */
+        .versus-banner {
+            display: none; flex-direction: column; gap: 8px;
+            background: linear-gradient(135deg, rgba(239,68,68,0.18) 0%, rgba(124,58,237,0.18) 100%);
+            border: 1px solid rgba(239,68,68,0.35); border-radius: 20px; padding: 16px 20px; margin-bottom: 20px;
+            animation: matchPop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .versus-banner.show { display: flex; }
+        .versus-title { color: #fca5a5; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .versus-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .versus-side { flex: 1; color: white; font-weight: 700; font-size: 13.5px; background: rgba(255,255,255,0.06); padding: 8px 12px; border-radius: 12px; text-align: center; }
+        .versus-vs { color: #fca5a5; font-weight: 900; font-size: 13px; }
+        .versus-hint { color: rgba(255,255,255,0.5); font-size: 11.5px; text-align: center; }
+
+        /* ETIQUETAS DE QUIÉN ELIGIÓ CADA IDEA */
+        .card.picked-me { box-shadow: 0 0 0 2px rgba(77,141,255,0.5), 0 20px 50px rgba(0,0,0,0.5); }
+        .pick-tags { position: absolute; top: 18px; left: 18px; display: flex; flex-direction: column; gap: 6px; z-index: 2; }
+        .pick-tag {
+            font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 30px;
+            backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2); color: white;
+        }
+        .pick-tag.tu { background: rgba(77,141,255,0.45); }
+        .pick-tag.pareja { background: rgba(139,92,246,0.45); }
+
         /* CALENDARIO */
         .calendar-section {
             background: rgba(255,255,255,0.045); backdrop-filter: blur(20px);
@@ -662,6 +686,16 @@
             </div>
         </div>
 
+        <div class="versus-banner" id="versusBanner">
+            <div class="versus-title"><i class="fas fa-bolt"></i> ¡Eligieron diferente! Resuélvanlo:</div>
+            <div class="versus-row">
+                <span class="versus-side" id="versusIdeaA">Tú: Sushi</span>
+                <span class="versus-vs">VS</span>
+                <span class="versus-side" id="versusIdeaB">Pareja: Cine</span>
+            </div>
+            <div class="versus-hint">Toca el dado 🎲 o la moneda 🪙 de arriba para decidir entre estas dos</div>
+        </div>
+
         <div class="calendar-section" id="calendarSection">
             <label><i class="far fa-calendar-alt"></i> Fijar fecha y hora</label>
             <input type="datetime-local" id="dateTimePicker" value="2026-08-30T19:30" />
@@ -901,17 +935,28 @@
         const FIREBASE_ENABLED = firebaseConfig.apiKey !== "PEGA_TU_API_KEY";
         let db = null;
 
-        function pushIdeas() { if (db) db.child('ideas').set(currentIdeas); }
-        function pushChosen() { if (db) db.child('chosenId').set(chosenId); }
-        function pushSavedPlans() { if (db) db.child('savedPlans').set(savedPlans); }
-        function pushAirIdeas() { if (db) db.child('airIdeas').set(airIdeas); }
-        function pushPiggy() { if (db) db.child('piggy').set(piggy); }
-        function pushPeople() { if (db) db.child('people').set(people); }
+        // Todas las escrituras pasan por AQUÍ, en un solo paquete atómico,
+        // para que nunca se pise un cambio con otro que llega casi al mismo tiempo.
+        function pushState() {
+            const payload = { people, ideas: currentIdeas, chosenBy, savedPlans, airIdeas, piggy };
+            try { localStorage.setItem('hipocrene_backup', JSON.stringify(payload)); } catch(e) {}
+            if (!db) return;
+            db.set(payload).catch(err => {
+                console.error(err);
+                showToast('⚠️ No se guardó en la nube (revisa las Reglas de tu Realtime Database)');
+            });
+        }
+        function pushIdeas() { pushState(); }
+        function pushChosen() { pushState(); }
+        function pushSavedPlans() { pushState(); }
+        function pushAirIdeas() { pushState(); }
+        function pushPiggy() { pushState(); }
+        function pushPeople() { pushState(); }
 
         function applyRemoteState(data) {
             people = data.people || people;
             currentIdeas = data.ideas || currentIdeas;
-            chosenId = (data.chosenId !== undefined) ? data.chosenId : chosenId;
+            chosenBy = data.chosenBy || chosenBy;
             savedPlans = data.savedPlans || [];
             airIdeas = data.airIdeas || [];
             piggy = data.piggy || piggy;
@@ -921,14 +966,21 @@
             renderHistory();
             renderAirSky();
             renderPiggy();
-            if (chosenId) {
-                const idea = currentIdeas.find(i => i.id === chosenId);
-                if (idea) selectedPlanDisplay.textContent = idea.title;
-            }
+            evaluateSelection(false);
         }
 
         function seedRemoteState() {
-            db.set({ people, ideas: currentIdeas, chosenId, savedPlans, airIdeas, piggy });
+            db.set({ people, ideas: currentIdeas, chosenBy, savedPlans, airIdeas, piggy });
+        }
+
+        function loadLocalBackup() {
+            try {
+                const raw = localStorage.getItem('hipocrene_backup');
+                if (!raw) return false;
+                const data = JSON.parse(raw);
+                applyRemoteState(data);
+                return true;
+            } catch(e) { return false; }
         }
 
         function initFirebaseSync() {
@@ -959,7 +1011,8 @@
         }
 
         let currentIdeas = [...ideaBank];
-        let chosenId = null;
+        let chosenBy = { tu: null, pareja: null }; // el id que cada quien tiene elegido en este momento
+        let finalChosenId = null; // el que quedó acordado (match o resuelto por versus)
         let savedPlans = []; // { id, name, date, dateRaw, photos: [], budget, budgetClass, location, usedPiggy, icon, image }
         let airIdeas = []; // { id, title, note, developed, developedText }
         let sortAscending = true;
@@ -983,6 +1036,9 @@
         const counterDisplay = document.getElementById('counterDisplay');
         const matchBanner = document.getElementById('matchBanner');
         const matchIdeaName = document.getElementById('matchIdeaName');
+        const versusBanner = document.getElementById('versusBanner');
+        const versusIdeaA = document.getElementById('versusIdeaA');
+        const versusIdeaB = document.getElementById('versusIdeaB');
         const selectedPlanDisplay = document.getElementById('selectedPlanDisplay');
         const dateTimePicker = document.getElementById('dateTimePicker');
         const savePlanBtn = document.getElementById('savePlanBtn');
@@ -1105,16 +1161,23 @@
         function renderCards() {
             carousel.innerHTML = '';
             currentIdeas.forEach(idea => {
-                const isChosen = idea.id === chosenId;
+                const isChosen = idea.id === finalChosenId;
+                const pickedByTu = idea.id === chosenBy.tu;
+                const pickedByPareja = idea.id === chosenBy.pareja;
+                const pickedByMe = idea.id === chosenBy[activeUser];
                 const card = document.createElement('div');
-                card.className = 'card' + (isChosen ? ' chosen' : '');
+                card.className = 'card' + (isChosen ? ' chosen' : '') + (pickedByMe && !isChosen ? ' picked-me' : '');
                 card.dataset.id = idea.id;
+                const pickTags = [];
+                if (pickedByTu) pickTags.push(`<span class="pick-tag tu">${people.tu.emoji} ${people.tu.name}</span>`);
+                if (pickedByPareja) pickTags.push(`<span class="pick-tag pareja">${people.pareja.emoji} ${people.pareja.name}</span>`);
                 card.innerHTML = `
                     <img class="card-image" src="${idea.image}" alt="${idea.title}" loading="lazy" />
                     <div class="card-gradient"></div>
                     <div class="chosen-badge"><i class="fas fa-heart"></i> Elegido</div>
-                    <button class="heart-btn${isChosen ? ' filled' : ''}" data-id="${idea.id}">
-                        <i class="${isChosen ? 'fas' : 'far'} fa-heart"></i>
+                    ${pickTags.length ? `<div class="pick-tags">${pickTags.join('')}</div>` : ''}
+                    <button class="heart-btn${pickedByMe ? ' filled' : ''}" data-id="${idea.id}">
+                        <i class="${pickedByMe ? 'fas' : 'far'} fa-heart"></i>
                     </button>
                     <div class="card-content">
                         <div class="card-title">${idea.emoji} ${idea.title}</div>
@@ -1133,24 +1196,65 @@
         function chooseIdea(id) {
             const idea = currentIdeas.find(i => i.id === id);
             if (!idea) return;
-            chosenId = id;
+            chosenBy[activeUser] = id;
             pushChosen();
             renderCards();
             const cardEl = carousel.querySelector(`.card[data-id="${id}"]`);
             if (cardEl) cardEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-            selectedPlanDisplay.textContent = idea.title;
+            evaluateSelection(true);
+        }
 
-            const partnerLikes = Math.random() > 0.4;
-            const otherName = people[otherUserKey(activeUser)].name;
-            if (partnerLikes) {
-                matchIdeaName.textContent = idea.title;
-                matchBanner.classList.add('show');
-                createConfetti();
-                showToast('❤️ ¡Elegiste "' + idea.title + '"! A ' + otherName + ' también le encanta');
+        // Decide si hay match, versus (eligieron distinto) o falta que elija el otro
+        function evaluateSelection(fromUserAction) {
+            const a = chosenBy.tu, b = chosenBy.pareja;
+            versusBanner.classList.remove('show');
+            if (a !== null && b !== null && a === b) {
+                finalChosenId = a;
+                const idea = currentIdeas.find(i => i.id === a);
+                if (idea) {
+                    selectedPlanDisplay.textContent = idea.title;
+                    matchIdeaName.textContent = idea.title;
+                    matchBanner.classList.add('show');
+                    if (fromUserAction) { createConfetti(); showToast('❤️ ¡Match! Los dos eligieron "' + idea.title + '"'); }
+                }
+            } else if (a !== null && b !== null && a !== b) {
+                matchBanner.classList.remove('show');
+                finalChosenId = null;
+                selectedPlanDisplay.textContent = 'Ninguno';
+                const ideaA = currentIdeas.find(i => i.id === a);
+                const ideaB = currentIdeas.find(i => i.id === b);
+                if (ideaA && ideaB) {
+                    versusIdeaA.textContent = people.tu.emoji + ' ' + ideaA.title;
+                    versusIdeaB.textContent = people.pareja.emoji + ' ' + ideaB.title;
+                    versusBanner.classList.add('show');
+                    if (fromUserAction) showToast('⚔️ Eligieron diferente: toca dado o moneda para el versus');
+                }
             } else {
                 matchBanner.classList.remove('show');
-                showToast('❤️ Elegiste "' + idea.title + '"');
+                finalChosenId = null;
+                if (fromUserAction) {
+                    const idea = currentIdeas.find(i => i.id === chosenBy[activeUser]);
+                    if (idea) showToast('❤️ Elegiste "' + idea.title + '". Falta que ' + people[otherUserKey(activeUser)].name + ' elija');
+                }
             }
+            renderCards();
+        }
+
+        // Resuelve el versus entre las dos ideas elegidas (usado por dado y moneda cuando hay empate distinto)
+        function resolveVersus(winnerId) {
+            const idea = currentIdeas.find(i => i.id === winnerId);
+            if (!idea) return;
+            chosenBy.tu = winnerId;
+            chosenBy.pareja = winnerId;
+            finalChosenId = winnerId;
+            pushChosen();
+            versusBanner.classList.remove('show');
+            matchIdeaName.textContent = idea.title;
+            matchBanner.classList.add('show');
+            selectedPlanDisplay.textContent = idea.title;
+            createConfetti();
+            showToast('🏆 ¡Ganó "' + idea.title + '"! Ya quedó elegido para los dos');
+            renderCards();
         }
 
         function showToast(message) {
@@ -1218,29 +1322,56 @@
             }
         });
 
-        // ---------- BOTÓN ALEATORIO Y MONEDA (para cuando no pueden decidir) ----------
+        // ---------- BOTÓN ALEATORIO Y MONEDA ----------
+        // Si tú y tu pareja eligieron ideas distintas (versus pendiente), estos botones
+        // deciden entre ESAS DOS. Si no hay versus, deciden entre todas (para cuando nadie se decide).
+        function versusPending() {
+            return chosenBy.tu !== null && chosenBy.pareja !== null && chosenBy.tu !== chosenBy.pareja;
+        }
+
         randomBtn.addEventListener('click', () => {
             if (currentIdeas.length === 0) { showToast('⚠️ Agrega ideas primero'); return; }
             randomBtn.classList.add('spinning');
             setTimeout(() => {
                 randomBtn.classList.remove('spinning');
-                const pick = currentIdeas[Math.floor(Math.random() * currentIdeas.length)];
-                chooseIdea(pick.id);
-                showToast('🎲 El azar eligió: ' + pick.title);
+                if (versusPending()) {
+                    const winnerId = Math.random() > 0.5 ? chosenBy.tu : chosenBy.pareja;
+                    resolveVersus(winnerId);
+                } else {
+                    const pick = currentIdeas[Math.floor(Math.random() * currentIdeas.length)];
+                    chosenBy.tu = pick.id; chosenBy.pareja = pick.id;
+                    pushChosen();
+                    evaluateSelection(false);
+                    createConfetti();
+                    showToast('🎲 El azar eligió para los dos: ' + pick.title);
+                }
             }, 700);
         });
 
         coinBtn.addEventListener('click', () => {
-            if (currentIdeas.length < 2) { showToast('⚠️ Necesitas al menos 2 ideas para lanzar la moneda'); return; }
+            coinBtn.classList.add('spinning');
+            if (versusPending()) {
+                const ideaA = currentIdeas.find(i => i.id === chosenBy.tu);
+                const ideaB = currentIdeas.find(i => i.id === chosenBy.pareja);
+                showToast('🪙 Cara: ' + ideaA.title + ' · Sello: ' + ideaB.title);
+                setTimeout(() => {
+                    coinBtn.classList.remove('spinning');
+                    resolveVersus(Math.random() > 0.5 ? chosenBy.tu : chosenBy.pareja);
+                }, 900);
+                return;
+            }
+            if (currentIdeas.length < 2) { showToast('⚠️ Necesitas al menos 2 ideas para lanzar la moneda'); coinBtn.classList.remove('spinning'); return; }
             const shuffled = [...currentIdeas].sort(() => Math.random() - 0.5);
             const a = shuffled[0], b = shuffled[1];
-            coinBtn.classList.add('spinning');
             showToast('🪙 Cara: ' + a.title + ' · Sello: ' + b.title);
             setTimeout(() => {
                 coinBtn.classList.remove('spinning');
                 const winner = Math.random() > 0.5 ? a : b;
-                chooseIdea(winner.id);
-                showToast('🪙 ¡Salió "' + winner.title + '"!');
+                chosenBy.tu = winner.id; chosenBy.pareja = winner.id;
+                pushChosen();
+                evaluateSelection(false);
+                createConfetti();
+                showToast('🪙 ¡Salió "' + winner.title + '"! Elegido para los dos');
             }, 900);
         });
 
@@ -1370,17 +1501,18 @@
             });
 
             const budget = Number(planBudgetInput.value) || 0;
-            const usedPiggy = usePiggyToggle.checked;
+            let usedPiggy = usePiggyToggle.checked;
             if (usedPiggy) {
                 if (piggy.saved <= 0) {
-                    showToast('⚠️ Tu alcancía está vacía todavía');
-                    return;
+                    // Ya NO bloquea el guardado: solo avisa y sigue sin descontar nada.
+                    usedPiggy = false;
+                    showToast('⚠️ Tu alcancía está vacía, se guarda el plan sin descontar');
+                } else {
+                    const deduction = budget > 0 ? Math.min(budget, piggy.saved) : piggy.saved;
+                    piggy.saved -= deduction;
+                    renderPiggy();
+                    showToast('🐷 Se descontaron ' + formatMoney(deduction) + ' de la alcancía');
                 }
-                const deduction = budget > 0 ? Math.min(budget, piggy.saved) : piggy.saved;
-                piggy.saved -= deduction;
-                pushPiggy();
-                renderPiggy();
-                showToast('🐷 Se descontaron ' + formatMoney(deduction) + ' de la alcancía');
             }
 
             const chosenIdea = currentIdeas.find(i => i.title === planName);
@@ -1669,7 +1801,8 @@
         function init() {
             dateTimePicker.value = '2026-08-30T19:30';
             currentIdeas = [...ideaBank];
-            chosenId = null;
+            chosenBy = { tu: null, pareja: null };
+            finalChosenId = null;
             savedPlans = [];
             airIdeas = [];
 
@@ -1683,6 +1816,10 @@
             renderPiggy();
             selectedPlanDisplay.textContent = 'Ninguno';
             matchBanner.classList.remove('show');
+            versusBanner.classList.remove('show');
+
+            // Carga instantánea desde el respaldo local, por si la nube tarda o falla
+            loadLocalBackup();
 
             if (rememberedUser === 'tu' || rememberedUser === 'pareja') {
                 activeUser = rememberedUser;
