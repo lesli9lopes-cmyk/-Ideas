@@ -81,6 +81,58 @@
         }
         .active-user-strip button:hover { background: rgba(255,255,255,0.16); }
 
+        /* DÍAS SIN VERNOS */
+        .dias-card {
+            background: rgba(255,255,255,0.045); backdrop-filter: blur(20px);
+            border-radius: 28px; padding: 28px 22px; border: 1px solid rgba(255,255,255,0.08);
+            text-align: center; margin-bottom: 16px;
+        }
+        .dias-heart { font-size: 34px; animation: diasBeat 1.8s ease-in-out infinite; }
+        @keyframes diasBeat { 0%,100% { transform: scale(1); } 15% { transform: scale(1.18); } 30% { transform: scale(1); } 45% { transform: scale(1.1); } 60% { transform: scale(1); } }
+        .dias-label { font-size: 12.5px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.55); margin-top: 6px; }
+        .dias-number {
+            font-size: 64px; font-weight: 900; line-height: 1.1; margin-top: 6px;
+            background: linear-gradient(135deg, #4d8dff 0%, #f472b6 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .dias-mood { font-size: 30px; margin-top: 2px; }
+        .dias-bar-track { height: 10px; border-radius: 20px; background: rgba(255,255,255,0.08); overflow: hidden; margin: 16px 0 10px; }
+        .dias-bar-fill { height: 100%; border-radius: 20px; background: linear-gradient(90deg, #4d8dff 0%, #f472b6 100%); transition: width 0.5s ease; }
+        .dias-lastseen { font-size: 12.5px; color: rgba(255,255,255,0.5); margin-bottom: 18px; }
+        .dias-date-row { margin-top: 18px; text-align: left; }
+        .dias-date-row label { display: block; font-size: 11.5px; font-weight: 600; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+        .dias-date-inputrow { display: flex; gap: 8px; }
+        .dias-date-inputrow input[type="date"] {
+            flex: 1; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.05); color: white; font-family: 'Inter', sans-serif; font-size: 13px;
+        }
+        .dias-date-btn {
+            padding: 0 16px; border-radius: 14px; border: none;
+            background: linear-gradient(135deg, #3b6fe0 0%, #7c3aed 100%); color: white;
+            font-weight: 700; font-size: 12.5px; cursor: pointer; white-space: nowrap;
+        }
+        .dias-history-list { display: flex; flex-direction: column; gap: 8px; }
+        .dias-history-item {
+            display: flex; align-items: center; justify-content: space-between; gap: 8px;
+            padding: 10px 14px; background: rgba(255,255,255,0.04); border-radius: 12px;
+            border-left: 3px solid #f472b6; font-size: 13.5px; color: rgba(255,255,255,0.8);
+        }
+        .dias-history-actions { display: flex; gap: 6px; }
+        .dias-history-actions button {
+            width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7); cursor: pointer; font-size: 12px;
+        }
+        .dias-history-actions .dias-del-btn { color: #f87171; border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.1); }
+
+        /* MODAL DETALLE DE PLAN */
+        .plan-detail-body { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+        .plan-detail-row {
+            display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.04); padding: 12px 14px; border-radius: 14px;
+        }
+        .plan-detail-row i { width: 18px; color: rgba(255,255,255,0.4); }
+        .plan-detail-actions { display: flex; flex-direction: column; gap: 10px; }
+
         /* MODAL BIENVENIDA / IDENTIDAD */
         .who-fields { display: flex; flex-direction: column; gap: 14px; margin-bottom: 18px; }
         .who-field-group {
@@ -384,6 +436,14 @@
         }
         .calendar-section input:focus { border-color: #4d8dff; background: rgba(255,255,255,0.08); }
         .calendar-section input::-webkit-calendar-picker-indicator { filter: invert(1); }
+        .form-input {
+            width: 100%; padding: 14px 18px; border-radius: 16px; box-sizing: border-box;
+            border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.05);
+            color: white; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500;
+            outline: none; transition: 0.2s;
+        }
+        .form-input:focus { border-color: #8b7cf6; background: rgba(255,255,255,0.08); }
+        .form-input option { background: #1a1b2e; color: white; }
         .selected-plan {
             display: flex; justify-content: space-between; align-items: center;
             margin-top: 12px; padding: 12px 16px; background: rgba(255,255,255,0.04);
@@ -620,6 +680,9 @@
             border: 1px solid rgba(255,255,255,0.08);
         }
         .album-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .album-photo-loading { display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.04); }
+        .album-loading-spinner { display: flex; flex-direction: column; align-items: center; gap: 6px; color: rgba(255,255,255,0.55); font-size: 11px; }
+        .album-loading-spinner i { font-size: 18px; color: #8b7cf6; }
         .album-photo .remove-photo {
             position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%;
             background: rgba(0,0,0,0.6); border: none; color: white; font-size: 11px; cursor: pointer;
@@ -717,6 +780,7 @@
         <div class="header-right">
             <div class="avatar-group" id="avatarGroup"></div>
             <button class="settings-btn" id="whoSettingsBtn" title="Editar usuarios"><i class="fas fa-user-gear"></i></button>
+            <button class="settings-btn" id="cleanupBtn" title="Limpiar datos de prueba"><i class="fas fa-broom"></i></button>
             <span class="counter-badge" id="counterDisplay">8 💡</span>
         </div>
     </div>
@@ -733,7 +797,9 @@
         <button class="tab-btn" data-tab="aire"><i class="fas fa-cloud"></i> Ideas al aire</button>
         <button class="tab-btn" data-tab="alcancia"><i class="fas fa-piggy-bank"></i> Alcancía</button>
         <button class="tab-btn" data-tab="recuerdos"><i class="fas fa-images"></i> Recuerdos</button>
+        <button class="tab-btn" data-tab="dias"><i class="fas fa-heart-pulse"></i> Días</button>
     </div>
+
 
     <!-- VISTA: PLANES -->
     <div class="view active" id="view-planes">
@@ -938,7 +1004,32 @@
             <div class="empty-history">Aún no hay recuerdos guardados 📷</div>
         </div>
     </div>
+
+    <!-- VISTA: DÍAS SIN VERNOS -->
+    <div class="view" id="view-dias">
+        <div class="dias-card">
+            <div class="dias-heart">❤️</div>
+            <div class="dias-label">Días sin vernos</div>
+            <div class="dias-number" id="diasNumber">0</div>
+            <div class="dias-mood" id="diasMood">😊</div>
+            <div class="dias-bar-track"><div class="dias-bar-fill" id="diasBarFill" style="width:0%"></div></div>
+            <div class="dias-lastseen" id="diasLastSeen">Aún no han registrado ningún encuentro</div>
+            <button class="btn-save" id="nosVimosBtn"><i class="fas fa-heart"></i> Nos vimos hoy</button>
+            <div class="dias-date-row">
+                <label>¿Fue otro día? Corrígelo aquí</label>
+                <div class="dias-date-inputrow">
+                    <input type="date" id="diasDateInput" />
+                    <button class="dias-date-btn" id="diasDateBtn"><i class="fas fa-calendar-check"></i> Registrar</button>
+                </div>
+            </div>
+        </div>
+        <div class="section-label" style="margin-top:18px;">Historial</div>
+        <div class="dias-history-list" id="diasHistoryList">
+            <div class="empty-history">Aún no hay registros</div>
+        </div>
+    </div>
 </div>
+
 
 <!-- MODAL ÁLBUM -->
 <div class="modal-overlay" id="albumModal">
@@ -973,6 +1064,52 @@
         </div>
     </div>
 </div>
+
+<!-- MODAL DETALLE DE PLAN (al tocar la tarjeta) -->
+<div class="modal-overlay" id="planDetailModal">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-header">
+            <div class="modal-title" id="planDetailTitle">Plan</div>
+            <button class="modal-close" id="planDetailClose"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="plan-detail-body" id="planDetailBody"></div>
+        <div class="plan-detail-actions">
+            <button class="btn-save" id="planDetailEditBtn"><i class="fas fa-pen"></i> Editar plan</button>
+            <button class="btn-save" id="planDetailDeleteBtn" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);"><i class="fas fa-trash"></i> Eliminar plan</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL NUEVA IDEA (con tiempo necesario real) -->
+<div class="modal-overlay" id="newIdeaModal">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-header">
+            <div class="modal-title">✍️ Nueva idea de salida</div>
+            <button class="modal-close" id="newIdeaClose"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="plan-detail-body">
+            <label style="display:block; font-size:13px; color:rgba(255,255,255,0.6); margin-bottom:6px;">Nombre</label>
+            <input type="text" id="newIdeaName" placeholder="Ej: Parque Botánico" class="form-input" style="width:100%; margin-bottom:14px;" />
+            <label style="display:block; font-size:13px; color:rgba(255,255,255,0.6); margin-bottom:6px;">⏱️ Tiempo necesario</label>
+            <select id="newIdeaDuration" class="form-input" style="width:100%; margin-bottom:14px;">
+                <option value="30 minutos">30 minutos</option>
+                <option value="1 hora">1 hora</option>
+                <option value="2 horas" selected>2 horas</option>
+                <option value="3 horas">3 horas</option>
+                <option value="Medio día">Medio día</option>
+                <option value="Día completo">Día completo</option>
+                <option value="custom">Personalizado...</option>
+            </select>
+            <input type="text" id="newIdeaDurationCustom" placeholder="Ej: 4 horas" class="form-input" style="width:100%; margin-bottom:14px; display:none;" />
+        </div>
+        <div class="plan-detail-actions">
+            <button class="btn-save" id="newIdeaSaveBtn"><i class="fas fa-plus"></i> Guardar idea</button>
+        </div>
+    </div>
+</div>
+
 
 <!-- MODAL BIENVENIDA / IDENTIDAD -->
 <div class="modal-overlay" id="whoModal">
@@ -1044,15 +1181,26 @@
         // sobre el valor MÁS RECIENTE del servidor, nunca sobre una copia vieja en el
         // celular — así nunca se "pierde" un ahorro aunque los dos toquen al mismo tiempo.
 
-        function pushIdeas() { if (ideasRef) ideasRef.set(currentIdeas); cacheLocal(); }
-        function pushChosen() { if (chosenRef) chosenRef.set(chosenBy); cacheLocal(); }
-        function pushAirIdeas() { if (airIdeasRef) airIdeasRef.set(airIdeas); cacheLocal(); }
-        function pushPeople() { if (peopleRef) peopleRef.set(people); cacheLocal(); }
-        function pushVersus() { if (versusRef) versusRef.set(versus); cacheLocal(); }
+        let idCounter = 0;
+        function genId() { idCounter = (idCounter + 1) % 1000; return Date.now() * 1000 + idCounter; }
+
+        function firebaseErrorHandler(context) {
+            return (err) => {
+                if (err) {
+                    console.error(context, err);
+                    showToast('⚠️ No se pudo guardar en la nube (' + context + '). Revisa las Reglas de tu Realtime Database — probablemente caducó el "modo de prueba".');
+                }
+            };
+        }
+        function pushIdeas() { if (ideasRef) ideasRef.set(currentIdeas, firebaseErrorHandler('ideas')); cacheLocal(); }
+        function pushChosen() { if (chosenRef) chosenRef.set(chosenBy, firebaseErrorHandler('elección')); cacheLocal(); }
+        function pushAirIdeas() { if (airIdeasRef) airIdeasRef.set(airIdeas, firebaseErrorHandler('ideas al aire')); cacheLocal(); }
+        function pushPeople() { if (peopleRef) peopleRef.set(people, firebaseErrorHandler('personas')); cacheLocal(); }
+        function pushVersus() { if (versusRef) versusRef.set(versus, firebaseErrorHandler('versus')); cacheLocal(); }
 
         // Agrega/edita/borra UN plan sin tocar los demás (evita perder otros planes)
-        function pushPlanUpsert(plan) { if (savedPlansRef) savedPlansRef.child(String(plan.id)).set(plan); cacheLocal(); }
-        function pushPlanRemove(id) { if (savedPlansRef) savedPlansRef.child(String(id)).remove(); cacheLocal(); }
+        function pushPlanUpsert(plan) { if (savedPlansRef) savedPlansRef.child(String(plan.id)).set(plan, firebaseErrorHandler('guardar salida')); cacheLocal(); }
+        function pushPlanRemove(id) { if (savedPlansRef) savedPlansRef.child(String(id)).remove(firebaseErrorHandler('borrar salida')); cacheLocal(); }
 
         // Ajusta la alcancía SOBRE EL VALOR MÁS RECIENTE del servidor (suma o resta segura)
         function piggyTransaction(mutator, onDone) {
@@ -1067,7 +1215,7 @@
             });
         }
         function pushPiggySettings() { // solo meta/tasa, se puede sobrescribir directo
-            if (piggyRef) piggyRef.update({ goal: piggy.goal, rate: piggy.rate });
+            if (piggyRef) piggyRef.update({ goal: piggy.goal, rate: piggy.rate }, firebaseErrorHandler('meta de ahorro'));
             cacheLocal();
         }
         // compatibilidad con nombres viejos usados en otras partes del código
@@ -1075,7 +1223,7 @@
         function pushPiggy() { pushPiggySettings(); }
 
         function cacheLocal() {
-            try { localStorage.setItem('hipocrene_backup', JSON.stringify({ people, ideas: currentIdeas, chosenBy, savedPlans, airIdeas, piggy, versus })); } catch(e) {}
+            try { localStorage.setItem('hipocrene_backup', JSON.stringify({ people, ideas: currentIdeas, chosenBy, savedPlans, airIdeas, piggy, versus, diasSinVernos })); } catch(e) {}
         }
 
         function loadLocalBackup() {
@@ -1090,6 +1238,7 @@
                 airIdeas = Array.isArray(data.airIdeas) ? data.airIdeas : [];
                 piggy = data.piggy || piggy;
                 versus = data.versus || versus;
+                diasSinVernos = data.diasSinVernos || diasSinVernos;
                 renderAll();
                 return true;
             } catch(e) { return false; }
@@ -1108,6 +1257,7 @@
             renderHistory();
             renderAirSky();
             renderPiggy();
+            renderDias();
             evaluateSelection(false);
             renderVersusUI(false);
         }
@@ -1127,12 +1277,13 @@
                 airIdeasRef = root.child('airIdeas');
                 piggyRef = root.child('piggy');
                 versusRef = root.child('versus');
+                diasRef = root.child('diasSinVernos');
 
                 let firstConnect = true;
                 root.once('value', (snap) => {
                     if (!snap.val()) {
                         // primera vez: siembra la estructura inicial
-                        root.set({ people, ideas: currentIdeas, chosenBy, savedPlans: {}, airIdeas: {}, piggy, versus });
+                        root.set({ people, ideas: currentIdeas, chosenBy, savedPlans: {}, airIdeas: {}, piggy, versus, diasSinVernos: { history: [] } });
                     }
                     if (firstConnect) { firstConnect = false; showToast('🔗 Conectado: la información se guarda y comparte de verdad'); }
                 });
@@ -1148,6 +1299,12 @@
                 airIdeasRef.on('value', snap => { airIdeas = objToArray(snap.val()); renderAirSky(); cacheLocal(); });
                 piggyRef.on('value', snap => { const v = snap.val(); if (v) { piggy = v; renderPiggy(); cacheLocal(); } });
                 versusRef.on('value', snap => { const v = snap.val() || { status: 'none' }; handleVersusUpdate(v); cacheLocal(); });
+                diasRef.on('value', snap => {
+                    const v = snap.val();
+                    diasSinVernos = { history: Array.isArray(v && v.history) ? v.history : (v && v.history ? Object.values(v.history) : []) };
+                    renderDias();
+                    cacheLocal();
+                });
             } catch (e) {
                 console.error(e);
                 showToast('⚠️ No se pudo conectar: revisa que copiaste bien los datos de Firebase');
@@ -1236,6 +1393,25 @@
         // Identidad
         const avatarGroup = document.getElementById('avatarGroup');
         const whoSettingsBtn = document.getElementById('whoSettingsBtn');
+        const cleanupBtn = document.getElementById('cleanupBtn');
+        const planDetailModal = document.getElementById('planDetailModal');
+        const planDetailTitle = document.getElementById('planDetailTitle');
+        const planDetailBody = document.getElementById('planDetailBody');
+        const planDetailClose = document.getElementById('planDetailClose');
+        const planDetailEditBtn = document.getElementById('planDetailEditBtn');
+        const planDetailDeleteBtn = document.getElementById('planDetailDeleteBtn');
+        let activeDetailPlanId = null;
+        // Días sin vernos
+        const diasNumber = document.getElementById('diasNumber');
+        const diasMood = document.getElementById('diasMood');
+        const diasBarFill = document.getElementById('diasBarFill');
+        const diasLastSeen = document.getElementById('diasLastSeen');
+        const nosVimosBtn = document.getElementById('nosVimosBtn');
+        const diasDateInput = document.getElementById('diasDateInput');
+        const diasDateBtn = document.getElementById('diasDateBtn');
+        const diasHistoryList = document.getElementById('diasHistoryList');
+        let diasSinVernos = { history: [] };
+        let diasRef = null;
         const activeUserLabel = document.getElementById('activeUserLabel');
         const switchUserBtn = document.getElementById('switchUserBtn');
         const whoModal = document.getElementById('whoModal');
@@ -1584,29 +1760,57 @@
         styleSheet.textContent = `@keyframes confettiFall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }`;
         document.head.appendChild(styleSheet);
 
+        // ---------- NUEVA IDEA (con tiempo necesario real) ----------
+        const newIdeaModal = document.getElementById('newIdeaModal');
+        const newIdeaClose = document.getElementById('newIdeaClose');
+        const newIdeaName = document.getElementById('newIdeaName');
+        const newIdeaDuration = document.getElementById('newIdeaDuration');
+        const newIdeaDurationCustom = document.getElementById('newIdeaDurationCustom');
+        const newIdeaSaveBtn = document.getElementById('newIdeaSaveBtn');
+
+        newIdeaDuration.addEventListener('change', () => {
+            newIdeaDurationCustom.style.display = newIdeaDuration.value === 'custom' ? 'block' : 'none';
+        });
+
         addIdeaBtn.addEventListener('click', () => {
-            const newIdea = prompt('✍️ Escribe tu idea de salida:');
-            if (newIdea && newIdea.trim() !== '') {
-                const images = [
-                    'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=600&fit=crop',
-                    'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=600&fit=crop',
-                    'https://images.unsplash.com/photo-1558618666-fcd25c85f982?w=600&h=600&fit=crop',
-                    'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=600&h=600&fit=crop',
-                ];
-                const newIdeaObj = {
-                    id: Date.now(),
-                    title: newIdea.trim(),
-                    emoji: ['🍕', '🍔', '🎭', '🏖️', '⛰️', '🛒', '🎨', '🚴'][Math.floor(Math.random() * 8)],
-                    proposerKey: activeUser,
-                    image: images[Math.floor(Math.random() * images.length)]
-                };
-                currentIdeas.push(newIdeaObj);
-                pushIdeas();
-                renderCards();
-                const cardEl = carousel.querySelector(`.card[data-id="${newIdeaObj.id}"]`);
-                if (cardEl) cardEl.scrollIntoView({ behavior: 'smooth', inline: 'center' });
-                showToast('✅ Idea agregada: ' + newIdea.trim());
-            }
+            newIdeaName.value = '';
+            newIdeaDuration.value = '2 horas';
+            newIdeaDurationCustom.style.display = 'none';
+            newIdeaDurationCustom.value = '';
+            newIdeaModal.classList.add('show');
+            setTimeout(() => newIdeaName.focus(), 200);
+        });
+        newIdeaClose.addEventListener('click', () => newIdeaModal.classList.remove('show'));
+        newIdeaModal.addEventListener('click', (e) => { if (e.target === newIdeaModal) newIdeaModal.classList.remove('show'); });
+
+        newIdeaSaveBtn.addEventListener('click', () => {
+            const title = newIdeaName.value.trim();
+            if (!title) { showToast('⚠️ Escribe un nombre para la idea'); return; }
+            const duration = newIdeaDuration.value === 'custom'
+                ? (newIdeaDurationCustom.value.trim() || '2 horas')
+                : newIdeaDuration.value;
+
+            const images = [
+                'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1558618666-fcd25c85f982?w=600&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=600&h=600&fit=crop',
+            ];
+            const newIdeaObj = {
+                id: genId(),
+                title,
+                duration,
+                emoji: ['🍕', '🍔', '🎭', '🏖️', '⛰️', '🛒', '🎨', '🚴'][Math.floor(Math.random() * 8)],
+                proposerKey: activeUser,
+                image: images[Math.floor(Math.random() * images.length)]
+            };
+            currentIdeas.push(newIdeaObj);
+            pushIdeas();
+            renderCards();
+            newIdeaModal.classList.remove('show');
+            const cardEl = carousel.querySelector(`.card[data-id="${newIdeaObj.id}"]`);
+            if (cardEl) cardEl.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+            showToast('✅ Idea agregada: ' + title + ' (⏱️ ' + duration + ')');
         });
 
         // ---------- BOTÓN ALEATORIO Y MONEDA ----------
@@ -1716,6 +1920,7 @@
                 const item = document.createElement('div');
                 item.className = 'history-item';
                 const budgetChip = plan.budget ? `<span class="plan-meta-chip budget"><i class="fas fa-tag"></i> ${plan.budgetClass} · ${formatMoney(plan.budget)}</span>` : '';
+                const durationChip = plan.duration ? `<span class="plan-meta-chip"><i class="far fa-clock"></i> ${plan.duration}</span>` : '';
                 const piggyChip = plan.usedPiggy ? `<span class="plan-meta-chip piggy"><i class="fas fa-piggy-bank"></i> Con alcancía</span>` : '';
                 const locationChip = plan.location ? `<span class="plan-meta-chip"><i class="fas fa-map-marker-alt"></i> ${plan.location}</span>` : '';
                 const savedByChip = (plan.savedBy && people[plan.savedBy]) ? `<span class="plan-meta-chip">${people[plan.savedBy].emoji} ${people[plan.savedBy].name}</span>` : '';
@@ -1726,7 +1931,7 @@
                             <span class="plan-name">${plan.name}</span>
                             <span class="date">${plan.date}</span>
                         </div>
-                        <div class="plan-meta-row">${budgetChip}${piggyChip}${locationChip}${savedByChip}</div>
+                        <div class="plan-meta-row">${budgetChip}${durationChip}${piggyChip}${locationChip}${savedByChip}</div>
                     </div>
                     <div class="history-item-actions">
                         <button class="album-btn" data-plan-id="${plan.id}">
@@ -1737,13 +1942,21 @@
                         </button>
                     </div>
                 `;
+                item.style.cursor = 'pointer';
+                item.dataset.planId = plan.id;
                 historyList.appendChild(item);
             });
+            historyList.querySelectorAll('.history-item').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    if (e.target.closest('.album-btn') || e.target.closest('.delete-plan-btn')) return;
+                    openPlanDetail(Number(el.dataset.planId));
+                });
+            });
             historyList.querySelectorAll('.album-btn').forEach(btn => {
-                btn.addEventListener('click', () => openAlbum(Number(btn.dataset.planId)));
+                btn.addEventListener('click', (e) => { e.stopPropagation(); openAlbum(Number(btn.dataset.planId)); });
             });
             historyList.querySelectorAll('.delete-plan-btn').forEach(btn => {
-                btn.addEventListener('click', () => deletePlan(Number(btn.dataset.planId)));
+                btn.addEventListener('click', (e) => { e.stopPropagation(); deletePlan(Number(btn.dataset.planId)); });
             });
             renderMemories();
         }
@@ -1751,12 +1964,43 @@
         function deletePlan(planId) {
             const plan = savedPlans.find(p => p.id === planId);
             if (!plan) return;
-            const ok = confirm('¿Borrar el plan "' + plan.name + '"? Esto también borrará sus fotos y no se puede deshacer.');
+            const ok = confirm('¿Eliminar esta salida?\n\n"' + plan.name + '"\n\nEsto también borra sus fotos y no se puede deshacer.');
             if (!ok) return;
-            savedPlans = savedPlans.filter(p => p.id !== planId);
 
-            // Si la idea de este plan seguía marcada como "Elegida"/match, la liberamos
-            // para que la card vuelva a quedar disponible para elegir de nuevo.
+            // Si no hay nube conectada, no hay forma de confirmar: borramos solo local.
+            if (!savedPlansRef) {
+                savedPlans = savedPlans.filter(p => p.id !== planId);
+                freeIdeaIfMatchedTo(plan);
+                cacheLocal();
+                renderHistory();
+                showToast('🗑️ Plan borrado (solo local, sin nube conectada)');
+                return;
+            }
+
+            // IMPORTANTE: no quitamos la card de la pantalla todavía. Primero pedimos
+            // el borrado REAL en la base de datos usando el ID único del registro
+            // (nunca por posición/índice), y solo si Firebase confirma que se borró
+            // actualizamos la interfaz. Así nunca "parece borrarse" sin estarlo.
+            showToast('🗑️ Borrando...');
+            savedPlansRef.child(String(planId)).remove((err) => {
+                if (err) {
+                    console.error('borrar salida', err);
+                    alert('⚠️ NO SE PUDO BORRAR EN LA BASE DE DATOS.\n\nMotivo: ' + err.message + '\n\nEsto casi siempre pasa porque las Reglas de tu Firebase Realtime Database ya no permiten escribir (el "modo de prueba" caduca a los 30 días). Revisa Firebase Console → Realtime Database → Reglas, y confirma que permitan lectura/escritura. Mientras tanto, esta salida NO se borró y volverá a aparecer al recargar.');
+                    showToast('⚠️ No se pudo borrar (revisa las Reglas de Firebase)');
+                    return; // la UI no cambia: el plan sigue existiendo de verdad, así que se sigue mostrando
+                }
+                // Confirmado por el servidor: ahora sí lo quitamos de la interfaz.
+                savedPlans = savedPlans.filter(p => p.id !== planId);
+                freeIdeaIfMatchedTo(plan);
+                cacheLocal();
+                renderHistory();
+                showToast('🗑️ Plan borrado y confirmado en la base de datos');
+            });
+        }
+
+        // Si la idea de este plan seguía marcada como "Elegida"/match, la liberamos
+        // para que la card vuelva a quedar disponible para elegir de nuevo.
+        function freeIdeaIfMatchedTo(plan) {
             const relatedIdea = currentIdeas.find(i => i.title === plan.name);
             if (relatedIdea && finalChosenId === relatedIdea.id) {
                 finalChosenId = null;
@@ -1767,10 +2011,6 @@
                 pushChosen();
                 renderCards();
             }
-
-            pushPlanRemove(planId); // borra SOLO este plan en la nube
-            renderHistory();
-            showToast('🗑️ Plan borrado');
         }
 
         sortByTimeBtn.addEventListener('click', () => {
@@ -1799,11 +2039,54 @@
             });
         }
 
+        let editingPlanId = null;
+        let savingPlan = false;
+
         savePlanBtn.addEventListener('click', () => {
+            if (savingPlan) return;
+
+            // ---- MODO EDICIÓN: actualiza el plan existente en vez de crear uno nuevo ----
+            if (editingPlanId) {
+                const plan = savedPlans.find(p => p.id === editingPlanId);
+                if (!plan) { editingPlanId = null; showToast('⚠️ Ese plan ya no existe'); return; }
+                const dateVal = dateTimePicker.value;
+                if (!dateVal) { showToast('⚠️ Selecciona una fecha y hora'); return; }
+                const formattedDate = new Date(dateVal).toLocaleString('es-ES', {
+                    weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+                });
+                const updatedPlan = {
+                    ...plan,
+                    date: formattedDate,
+                    dateRaw: dateVal,
+                    budget: Number(planBudgetInput.value) || 0,
+                    budgetClass: planBudgetClass.value,
+                    location: locationInput.value.trim(),
+                    icon: useIconForPlan ? (selectedPlanIcon || plan.icon || '🎉') : null,
+                    image: useIconForPlan ? null : (plan.image || null)
+                };
+                savingPlan = true;
+                savePlanBtn.disabled = true;
+                pushPlanUpsert(updatedPlan);
+                savedPlans = savedPlans.map(p => p.id === editingPlanId ? updatedPlan : p);
+                renderHistory();
+                editingPlanId = null;
+                savePlanBtn.innerHTML = '<i class="fas fa-save"></i> Guardar salida';
+                selectedPlanDisplay.textContent = 'Ninguno';
+                locationInput.value = '';
+                planBudgetInput.value = '';
+                usePiggyToggle.checked = false;
+                showToast('✏️ Plan actualizado');
+                setTimeout(() => { savingPlan = false; savePlanBtn.disabled = false; }, 500);
+                return;
+            }
+
             const planName = selectedPlanDisplay.textContent;
             if (!planName || planName === 'Ninguno') { showToast('⚠️ Primero elige una idea tocando el corazón'); return; }
             const dateVal = dateTimePicker.value;
             if (!dateVal) { showToast('⚠️ Selecciona una fecha y hora'); return; }
+            savingPlan = true;
+            savePlanBtn.disabled = true;
+            setTimeout(() => { savingPlan = false; savePlanBtn.disabled = false; }, 800);
             const formattedDate = new Date(dateVal).toLocaleString('es-ES', {
                 weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
             });
@@ -1817,10 +2100,11 @@
                 const planImage = (!useIconForPlan && chosenIdea) ? chosenIdea.image : null;
 
                 const newPlan = {
-                    id: Date.now(),
+                    id: genId(),
                     name: planName,
                     date: formattedDate,
                     dateRaw: dateVal,
+                    duration: chosenIdea ? (chosenIdea.duration || null) : null,
                     photos: [],
                     budget: budget,
                     budgetClass: planBudgetClass.value,
@@ -1898,10 +2182,11 @@
             albumModal.classList.add('show');
         }
 
-        function renderAlbumGrid(plan) {
+        function renderAlbumGrid(plan, opts) {
+            opts = opts || {};
             if (!Array.isArray(plan.photos)) plan.photos = [];
             albumGrid.innerHTML = '';
-            if (plan.photos.length === 0) {
+            if (plan.photos.length === 0 && !opts.loadingCount) {
                 albumGrid.innerHTML = '<div class="album-empty">Aún no hay fotos de este plan 📷<br>¡Agrega los recuerdos!</div>';
                 return;
             }
@@ -1911,6 +2196,12 @@
                 cell.innerHTML = `<img src="${photo.src}" alt="foto ${idx+1}" /><button class="remove-photo" data-idx="${idx}"><i class="fas fa-times"></i></button>`;
                 albumGrid.appendChild(cell);
             });
+            for (let i = 0; i < (opts.loadingCount || 0); i++) {
+                const cell = document.createElement('div');
+                cell.className = 'album-photo album-photo-loading';
+                cell.innerHTML = `<div class="album-loading-spinner"><i class="fas fa-spinner fa-spin"></i><span>Subiendo...</span></div>`;
+                albumGrid.appendChild(cell);
+            }
             albumGrid.querySelectorAll('.remove-photo').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const plan = savedPlans.find(p => p.id === activePlanId);
@@ -1923,31 +2214,76 @@
             });
         }
 
+        // Comprime la imagen en el navegador (reduce tamaño real antes de guardar) para que
+        // subir una foto del celular no tarde una eternidad ni infle la base de datos.
+        function compressImage(file, maxSize = 1280, quality = 0.72) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                const reader = new FileReader();
+                reader.onload = (ev) => { img.src = ev.target.result; };
+                reader.onerror = reject;
+                img.onload = () => {
+                    let { width, height } = img;
+                    if (width > height && width > maxSize) { height = Math.round(height * (maxSize / width)); width = maxSize; }
+                    else if (height > maxSize) { width = Math.round(width * (maxSize / height)); height = maxSize; }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width; canvas.height = height;
+                    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+                img.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
         albumAddBtn.addEventListener('click', () => albumFileInput.click());
 
-        albumFileInput.addEventListener('change', (e) => {
+        albumFileInput.addEventListener('change', async (e) => {
             const files = Array.from(e.target.files || []);
             if (files.length === 0) return;
             const plan = savedPlans.find(p => p.id === activePlanId);
             if (!plan) return;
             const caption = prompt('✍️ Descripción para este recuerdo (opcional):', plan.name) || '';
             if (!Array.isArray(plan.photos)) plan.photos = [];
-            let pending = files.length;
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    plan.photos.push({ src: ev.target.result, caption: caption.trim() });
-                    pending--;
-                    if (pending === 0) {
-                        pushPlanUpsert(plan);
-                        renderAlbumGrid(plan);
-                        renderHistory();
-                        showToast('📸 Fotos agregadas al álbum y al carrusel de recuerdos');
-                    }
-                };
-                reader.readAsDataURL(file);
-            });
             albumFileInput.value = '';
+
+            const loadingId = 'loading-' + Date.now();
+            showToast('⏳ Subiendo imagen' + (files.length > 1 ? 's' : '') + '...');
+            renderAlbumGrid(plan, { loadingCount: files.length });
+
+            try {
+                // Comprime todas las fotos en paralelo (rápido), pero el guardado real
+                // en la base se confirma antes de decir "guardado".
+                const compressed = await Promise.all(files.map(f => compressImage(f).catch(() => null)));
+                compressed.forEach(src => { if (src) plan.photos.push({ src, caption: caption.trim() }); });
+
+                if (!savedPlansRef) {
+                    // Sin nube conectada: se guarda solo local, avisamos igual que quedó.
+                    cacheLocal();
+                    renderAlbumGrid(plan);
+                    renderHistory();
+                    showToast('✅ Guardado (solo en este dispositivo, sin nube conectada)');
+                    return;
+                }
+
+                // Esperamos la CONFIRMACIÓN real de Firebase antes de decir "guardado".
+                savedPlansRef.child(String(plan.id)).set(plan, (err) => {
+                    if (err) {
+                        console.error('guardar recuerdo', err);
+                        showToast('⚠️ No se pudo guardar la imagen en la nube (revisa las Reglas de Firebase)');
+                        renderAlbumGrid(plan);
+                        return;
+                    }
+                    cacheLocal();
+                    renderAlbumGrid(plan);
+                    renderHistory();
+                    showToast('✅ Guardado — la imagen ya está en el álbum de los dos');
+                });
+            } catch (err) {
+                console.error(err);
+                showToast('⚠️ No se pudo procesar la imagen');
+                renderAlbumGrid(plan);
+            }
         });
 
         albumModalClose.addEventListener('click', () => albumModal.classList.remove('show'));
@@ -1985,7 +2321,7 @@
         airIdeaAddBtn.addEventListener('click', () => {
             const title = airIdeaTitle.value.trim();
             if (!title) { showToast('⚠️ Escribe al menos un título para tu idea'); return; }
-            airIdeas.push({ id: Date.now(), title, note: airIdeaNote.value.trim(), developed: false, developedText: '', proposerKey: activeUser });
+            airIdeas.push({ id: genId(), title, note: airIdeaNote.value.trim(), developed: false, developedText: '', proposerKey: activeUser });
             pushAirIdeas();
             airIdeaTitle.value = '';
             airIdeaNote.value = '';
@@ -2027,7 +2363,7 @@
                 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=600&h=600&fit=crop',
             ];
             const newIdeaObj = {
-                id: Date.now(),
+                id: genId(),
                 title: idea.title,
                 emoji: ['🍕', '🍔', '🎭', '🏖️', '⛰️', '🛒', '🎨', '🚴'][Math.floor(Math.random() * 8)],
                 proposerKey: activeUser,
@@ -2143,6 +2479,168 @@
             });
         });
 
+        // ---------- DÍAS SIN VERNOS ----------
+        function todayISO() {
+            const d = new Date();
+            return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+        }
+        function daysBetween(isoA, isoB) {
+            const a = new Date(isoA + 'T00:00:00');
+            const b = new Date(isoB + 'T00:00:00');
+            return Math.round((b - a) / 86400000);
+        }
+        function moodForDays(d) {
+            if (d <= 1) return '😊';
+            if (d <= 3) return '🙂';
+            if (d <= 6) return '😐';
+            if (d <= 13) return '😔';
+            if (d <= 29) return '🥺';
+            return '🌧️';
+        }
+        function pushDias() { if (diasRef) diasRef.set(diasSinVernos, firebaseErrorHandler('días sin vernos')); cacheLocal(); }
+
+        function renderDias() {
+            const history = (diasSinVernos.history || []).slice().sort((a,b) => a.date.localeCompare(b.date));
+            if (history.length === 0) {
+                diasNumber.textContent = '—';
+                diasMood.textContent = '💫';
+                diasBarFill.style.width = '0%';
+                diasLastSeen.textContent = 'Aún no han registrado ningún encuentro';
+                diasHistoryList.innerHTML = '<div class="empty-history">Aún no hay registros</div>';
+                return;
+            }
+            const lastSeen = history[history.length - 1].date;
+            const today = todayISO();
+            const dias = Math.max(0, daysBetween(lastSeen, today));
+            diasNumber.textContent = dias;
+            diasMood.textContent = moodForDays(dias);
+            diasBarFill.style.width = Math.min(100, dias * 6) + '%';
+            const lastSeenDate = new Date(lastSeen + 'T00:00:00');
+            diasLastSeen.textContent = 'Última vez que se vieron: ' + lastSeenDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+
+            diasHistoryList.innerHTML = '';
+            history.slice().reverse().forEach(entry => {
+                const item = document.createElement('div');
+                item.className = 'dias-history-item';
+                const d = new Date(entry.date + 'T00:00:00');
+                item.innerHTML = `
+                    <span>❤️ ${d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })} — Nos vimos</span>
+                    <div class="dias-history-actions">
+                        <button class="dias-edit-btn" data-id="${entry.id}" title="Editar fecha"><i class="fas fa-pen"></i></button>
+                        <button class="dias-del-btn" data-id="${entry.id}" title="Borrar"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                diasHistoryList.appendChild(item);
+            });
+            diasHistoryList.querySelectorAll('.dias-edit-btn').forEach(btn => {
+                btn.addEventListener('click', () => editDiasEntry(btn.dataset.id));
+            });
+            diasHistoryList.querySelectorAll('.dias-del-btn').forEach(btn => {
+                btn.addEventListener('click', () => deleteDiasEntry(btn.dataset.id));
+            });
+        }
+
+        function registrarNosVimos(iso) {
+            if (!iso) return;
+            if (!Array.isArray(diasSinVernos.history)) diasSinVernos.history = [];
+            const existing = diasSinVernos.history.find(e => e.date === iso);
+            if (existing) { showToast('❤️ Ese día ya estaba registrado'); return; }
+            diasSinVernos.history.push({ id: String(genId()), date: iso });
+            pushDias();
+            renderDias();
+            showToast('❤️ ¡Registrado! El contador vuelve a 0');
+        }
+
+        nosVimosBtn.addEventListener('click', () => registrarNosVimos(todayISO()));
+        diasDateBtn.addEventListener('click', () => {
+            if (!diasDateInput.value) { showToast('⚠️ Elige una fecha primero'); return; }
+            registrarNosVimos(diasDateInput.value);
+            diasDateInput.value = '';
+        });
+
+        function editDiasEntry(id) {
+            const entry = diasSinVernos.history.find(e => String(e.id) === String(id));
+            if (!entry) return;
+            const nueva = prompt('Corregir fecha (AAAA-MM-DD):', entry.date);
+            if (!nueva) return;
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(nueva)) { showToast('⚠️ Formato inválido, usa AAAA-MM-DD'); return; }
+            entry.date = nueva;
+            pushDias();
+            renderDias();
+            showToast('✏️ Fecha corregida');
+        }
+
+        function deleteDiasEntry(id) {
+            if (!confirm('¿Borrar este registro del historial?')) return;
+            diasSinVernos.history = (diasSinVernos.history || []).filter(e => String(e.id) !== String(id));
+            pushDias();
+            renderDias();
+            showToast('🗑️ Registro borrado, el contador se recalculó');
+        }
+
+        // ---------- MODAL DE DETALLE DE PLAN (tocar la tarjeta) ----------
+        function openPlanDetail(planId) {
+            const plan = savedPlans.find(p => p.id === planId);
+            if (!plan) return;
+            activeDetailPlanId = planId;
+            planDetailTitle.textContent = (plan.icon || '📅') + ' ' + plan.name;
+            const rows = [];
+            rows.push(`<div class="plan-detail-row"><i class="far fa-calendar"></i> ${plan.date}</div>`);
+            if (plan.duration) rows.push(`<div class="plan-detail-row"><i class="far fa-clock"></i> Duración: ${plan.duration}</div>`);
+            if (plan.location) rows.push(`<div class="plan-detail-row"><i class="fas fa-map-marker-alt"></i> ${plan.location}</div>`);
+            if (plan.budget) rows.push(`<div class="plan-detail-row"><i class="fas fa-tag"></i> ${plan.budgetClass} · ${formatMoney(plan.budget)}</div>`);
+            if (plan.usedPiggy) rows.push(`<div class="plan-detail-row"><i class="fas fa-piggy-bank"></i> Pagado con la alcancía</div>`);
+            if (plan.savedBy && people[plan.savedBy]) rows.push(`<div class="plan-detail-row"><i class="fas fa-user"></i> Guardado por ${people[plan.savedBy].name}</div>`);
+            rows.push(`<div class="plan-detail-row"><i class="fas fa-images"></i> ${(plan.photos||[]).length} foto(s) en el álbum</div>`);
+            planDetailBody.innerHTML = rows.join('');
+            planDetailModal.classList.add('show');
+        }
+        planDetailClose.addEventListener('click', () => planDetailModal.classList.remove('show'));
+        planDetailModal.addEventListener('click', (e) => { if (e.target === planDetailModal) planDetailModal.classList.remove('show'); });
+
+        planDetailDeleteBtn.addEventListener('click', () => {
+            if (!activeDetailPlanId) return;
+            planDetailModal.classList.remove('show');
+            deletePlan(activeDetailPlanId);
+        });
+
+        planDetailEditBtn.addEventListener('click', () => {
+            const plan = savedPlans.find(p => p.id === activeDetailPlanId);
+            if (!plan) return;
+            editingPlanId = plan.id;
+            selectedPlanDisplay.textContent = plan.name;
+            dateTimePicker.value = plan.dateRaw || '';
+            locationInput.value = plan.location || '';
+            planBudgetInput.value = plan.budget || '';
+            planBudgetClass.value = plan.budgetClass || 'Medio';
+            if (plan.icon) { useIconForPlan = true; selectedPlanIcon = plan.icon; useIconBtn.click(); }
+            else { useImageBtn.click(); }
+            savePlanBtn.innerHTML = '<i class="fas fa-save"></i> Guardar cambios';
+            planDetailModal.classList.remove('show');
+            document.querySelector('.tab-btn[data-tab="planes"]').click();
+            setTimeout(() => savePlanBtn.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
+            showToast('✏️ Editando "' + plan.name + '" — cambia lo que quieras y presiona Guardar cambios');
+        });
+
+        // ---------- LIMPIAR DATOS DE PRUEBA ----------
+        cleanupBtn.addEventListener('click', () => {
+            if (!confirm('⚠️ ¿Eliminar TODOS los planes, ahorros, ideas al aire, VS y el historial de "días sin vernos"? Esta acción no se puede deshacer.')) return;
+            if (!confirm('¿Estás SEGURO? Tus nombres/íconos NO se van a borrar, solo los datos de prueba.')) return;
+            if (savedPlansRef) savedPlansRef.remove(firebaseErrorHandler('limpiar salidas'));
+            if (airIdeasRef) airIdeasRef.remove(firebaseErrorHandler('limpiar ideas al aire'));
+            if (piggyRef) piggyRef.set({ goal: 0, rate: 0, saved: 0, days: 0, log: [] }, firebaseErrorHandler('limpiar alcancía'));
+            if (versusRef) versusRef.set({ status: 'none', from: null, ideaFrom: null, ideaTo: null, winnerId: null }, firebaseErrorHandler('limpiar versus'));
+            if (chosenRef) chosenRef.set({ tu: null, pareja: null }, firebaseErrorHandler('limpiar elección'));
+            if (diasRef) diasRef.set({ history: [] }, firebaseErrorHandler('limpiar días sin vernos'));
+            savedPlans = []; airIdeas = []; piggy = { goal: 0, rate: 0, saved: 0, days: 0, log: [] };
+            versus = { status: 'none', from: null, ideaFrom: null, ideaTo: null, winnerId: null };
+            chosenBy = { tu: null, pareja: null }; finalChosenId = null; diasSinVernos = { history: [] };
+            renderHistory(); renderAirSky(); renderPiggy(); renderDias(); renderCards(); renderVersusUI(false);
+            selectedPlanDisplay.textContent = 'Ninguno';
+            matchBanner.classList.remove('show');
+            showToast('🧹 Datos de prueba eliminados. Todo en 0.');
+        });
+
         // ---------- INICIALIZAR ----------
         function init() {
             dateTimePicker.value = '2026-08-30T19:30';
@@ -2153,6 +2651,7 @@
             lastVersusStatus = 'none';
             savedPlans = [];
             airIdeas = [];
+            diasSinVernos = { history: [] };
 
             const rememberedUser = localStorage.getItem('hipocrene_who');
 
@@ -2162,6 +2661,7 @@
             renderHistory();
             renderAirSky();
             renderPiggy();
+            renderDias();
             selectedPlanDisplay.textContent = 'Ninguno';
             matchBanner.classList.remove('show');
             versusNotify.classList.remove('show');
