@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(160deg, #0a1230 0%, #142454 49.5%, #2a1854 50.5%, #3b1f6b 100%);
+            background: linear-gradient(90deg, #0a1740 0%, #14245e 22%, #22246a 42%, #2e2274 50%, #3a2280 58%, #442184 78%, #4a1f8a 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -269,23 +269,92 @@
         }
         .match-banner-right button:hover { background: rgba(255,255,255,0.3); }
 
-        /* VERSUS BANNER */
-        .versus-banner {
-            display: none; flex-direction: column; gap: 8px;
-            background: linear-gradient(135deg, rgba(239,68,68,0.18) 0%, rgba(124,58,237,0.18) 100%);
-            border: 1px solid rgba(239,68,68,0.35); border-radius: 20px; padding: 16px 20px; margin-bottom: 20px;
-            animation: matchPop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+        /* NOTIFICACIÓN DE RETO VERSUS */
+        .versus-notify {
+            display: none; align-items: center; gap: 14px;
+            background: linear-gradient(135deg, rgba(239,68,68,0.22) 0%, rgba(124,58,237,0.22) 100%);
+            border: 1px solid rgba(239,68,68,0.4); border-radius: 20px; padding: 16px 18px; margin-bottom: 20px;
+            animation: versusNotifyIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+            box-shadow: 0 10px 34px rgba(239,68,68,0.18);
         }
-        .versus-banner.show { display: flex; }
-        .versus-title { color: #fca5a5; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 8px; }
-        .versus-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-        .versus-side { flex: 1; color: white; font-weight: 700; font-size: 13.5px; background: rgba(255,255,255,0.06); padding: 8px 12px; border-radius: 12px; text-align: center; }
-        .versus-heart-btn { border: 1px solid rgba(255,255,255,0.14); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; transition: transform 0.15s ease, background 0.15s ease; }
-        .versus-heart-btn i { color: #fb7185; }
-        .versus-heart-btn:hover { background: rgba(251,113,133,0.16); transform: translateY(-1px); }
-        .versus-heart-btn:active { transform: scale(0.96); }
-        .versus-vs { color: #fca5a5; font-weight: 900; font-size: 13px; }
-        .versus-hint { color: rgba(255,255,255,0.5); font-size: 11.5px; text-align: center; }
+        .versus-notify.show { display: flex; }
+        @keyframes versusNotifyIn { 0% { transform: translateY(-14px) scale(0.9); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+        .versus-notify-icon {
+            width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0;
+            background: linear-gradient(135deg, #ef4444 0%, #7c3aed 100%);
+            display: flex; align-items: center; justify-content: center; color: white; font-size: 19px;
+            animation: versusPulse 1.4s ease-in-out infinite;
+        }
+        @keyframes versusPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); } 50% { box-shadow: 0 0 0 10px rgba(239,68,68,0); } }
+        .versus-notify-body { flex: 1; min-width: 0; }
+        .versus-notify-title { color: #fecaca; font-weight: 800; font-size: 14px; margin-bottom: 2px; }
+        .versus-notify-sub { color: rgba(255,255,255,0.75); font-size: 12.5px; }
+        .versus-notify-actions { display: flex; flex-direction: column; gap: 6px; }
+        .versus-btn {
+            border: none; border-radius: 12px; padding: 8px 14px; font-weight: 700; font-size: 12px;
+            cursor: pointer; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 6px; white-space: nowrap;
+            transition: transform 0.15s ease;
+        }
+        .versus-btn:active { transform: scale(0.94); }
+        .versus-btn.accept { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; }
+        .versus-btn.reject { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.15); }
+
+        /* ARENA VISUAL DEL VERSUS */
+        .versus-arena {
+            display: none; flex-direction: column; gap: 16px; margin-bottom: 20px;
+            background: radial-gradient(circle at 50% 0%, rgba(124,58,237,0.25) 0%, rgba(10,10,25,0.4) 60%);
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 26px; padding: 20px 16px;
+            animation: versusNotifyIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .versus-arena.show { display: flex; }
+        .versus-arena-header {
+            text-align: center; color: #fca5a5; font-weight: 900; font-size: 14px; letter-spacing: 0.5px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .versus-arena-stage { display: flex; align-items: center; gap: 10px; position: relative; }
+        .versus-fighter {
+            flex: 1; position: relative; border-radius: 20px; overflow: hidden; height: 190px;
+            cursor: pointer; border: 2px solid rgba(255,255,255,0.1);
+            transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), border-color 0.25s ease;
+        }
+        .versus-fighter.left { animation: slideInLeft 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+        .versus-fighter.right { animation: slideInRight 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+        @keyframes slideInLeft { 0% { transform: translateX(-40px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+        @keyframes slideInRight { 0% { transform: translateX(40px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+        .versus-fighter:hover { transform: scale(1.03); border-color: rgba(255,255,255,0.35); }
+        .versus-fighter:active { transform: scale(0.97); }
+        .versus-fighter-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .versus-fighter-glow {
+            position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 55%); pointer-events: none;
+        }
+        .versus-fighter-name {
+            position: absolute; bottom: 34px; left: 12px; right: 12px; color: white; font-weight: 800; font-size: 15px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+        }
+        .versus-fighter-owner {
+            position: absolute; bottom: 10px; left: 12px; right: 12px; color: rgba(255,255,255,0.75); font-size: 11px; font-weight: 600;
+        }
+        .versus-vs-badge {
+            position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 3;
+            width: 52px; height: 52px; border-radius: 50%;
+            background: linear-gradient(135deg, #ef4444 0%, #7c3aed 100%);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 0 4px rgba(10,10,25,0.7), 0 0 30px rgba(239,68,68,0.6);
+            animation: vsSpin 2.5s ease-in-out infinite;
+        }
+        .versus-vs-badge span { color: white; font-weight: 900; font-size: 14px; }
+        @keyframes vsSpin { 0%,100% { transform: translate(-50%,-50%) rotate(-6deg) scale(1); } 50% { transform: translate(-50%,-50%) rotate(6deg) scale(1.08); } }
+        .versus-arena-actions { display: flex; gap: 10px; }
+        .versus-decide-btn {
+            flex: 1; border: none; border-radius: 14px; padding: 12px; font-weight: 700; font-size: 13px;
+            background: linear-gradient(135deg, #3b6fe0 0%, #7c3aed 100%); color: white; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Inter', sans-serif;
+            transition: transform 0.15s ease;
+        }
+        .versus-decide-btn:active { transform: scale(0.96); }
+        .versus-arena-hint { text-align: center; color: rgba(255,255,255,0.4); font-size: 11px; }
+        .versus-arena.winner-reveal .versus-fighter:not(.winner) { opacity: 0.25; filter: grayscale(1); transform: scale(0.92); }
+        .versus-arena.winner-reveal .versus-fighter.winner { transform: scale(1.06); border-color: #facc15; box-shadow: 0 0 30px rgba(250,204,21,0.5); }
 
         /* ETIQUETAS DE QUIÉN ELIGIÓ CADA IDEA */
         .card.picked-me { box-shadow: 0 0 0 2px rgba(77,141,255,0.5), 0 20px 50px rgba(0,0,0,0.5); }
@@ -690,14 +759,42 @@
             </div>
         </div>
 
-        <div class="versus-banner" id="versusBanner">
-            <div class="versus-title"><i class="fas fa-bolt"></i> ¡Eligieron diferente! Resuélvanlo:</div>
-            <div class="versus-row">
-                <button class="versus-side versus-heart-btn" id="versusIdeaA"><i class="fas fa-heart"></i> <span>Tú: Sushi</span></button>
-                <span class="versus-vs">VS</span>
-                <button class="versus-side versus-heart-btn" id="versusIdeaB"><i class="fas fa-heart"></i> <span>Pareja: Cine</span></button>
+        <!-- Notificación de reto: aparece cuando eligen ideas distintas -->
+        <div class="versus-notify" id="versusNotify">
+            <div class="versus-notify-icon"><i class="fas fa-bolt"></i></div>
+            <div class="versus-notify-body">
+                <div class="versus-notify-title" id="versusNotifyTitle">¡Te retaron a un VERSUS!</div>
+                <div class="versus-notify-sub" id="versusNotifySub"><strong>Jhefersony</strong> quiere hacer un VS contigo</div>
             </div>
-            <div class="versus-hint">Toca un corazón para elegir directo, o el dado 🎲 / la moneda 🪙 de arriba para decidir al azar</div>
+            <div class="versus-notify-actions" id="versusNotifyActions">
+                <button class="versus-btn accept" id="versusAcceptBtn"><i class="fas fa-check"></i> Aceptar</button>
+                <button class="versus-btn reject" id="versusRejectBtn"><i class="fas fa-times"></i> Rechazar</button>
+            </div>
+        </div>
+
+        <!-- Arena visual: dos ideas enfrentadas, cara a cara -->
+        <div class="versus-arena" id="versusArena">
+            <div class="versus-arena-header"><i class="fas fa-fire"></i> ¡VERSUS CONFIRMADO!</div>
+            <div class="versus-arena-stage">
+                <div class="versus-fighter left" id="versusFighterA">
+                    <img class="versus-fighter-img" id="versusImgA" src="" alt="" />
+                    <div class="versus-fighter-glow"></div>
+                    <div class="versus-fighter-name" id="versusNameA">Sushi</div>
+                    <div class="versus-fighter-owner" id="versusOwnerA">🙋‍♂️ Jhefersony</div>
+                </div>
+                <div class="versus-vs-badge"><span>VS</span></div>
+                <div class="versus-fighter right" id="versusFighterB">
+                    <img class="versus-fighter-img" id="versusImgB" src="" alt="" />
+                    <div class="versus-fighter-glow"></div>
+                    <div class="versus-fighter-name" id="versusNameB">Cine VIP</div>
+                    <div class="versus-fighter-owner" id="versusOwnerB">👩 Yesly</div>
+                </div>
+            </div>
+            <div class="versus-arena-actions">
+                <button class="versus-decide-btn" id="versusDiceBtn"><i class="fas fa-dice"></i> Decidir con dado</button>
+                <button class="versus-decide-btn" id="versusCoinBtn"><i class="fas fa-coins"></i> Cara o sello</button>
+            </div>
+            <div class="versus-arena-hint">O toca directamente la tarjeta que quieren que gane</div>
         </div>
 
         <div class="calendar-section" id="calendarSection">
@@ -938,43 +1035,47 @@
         };
         const FIREBASE_ENABLED = firebaseConfig.apiKey !== "PEGA_TU_API_KEY";
         let db = null;
+        let peopleRef, ideasRef, chosenRef, savedPlansRef, airIdeasRef, piggyRef, versusRef;
 
-        // Todas las escrituras pasan por AQUÍ, en un solo paquete atómico,
-        // para que nunca se pise un cambio con otro que llega casi al mismo tiempo.
-        function pushState() {
-            const payload = { people, ideas: currentIdeas, chosenBy, savedPlans, airIdeas, piggy };
-            try { localStorage.setItem('hipocrene_backup', JSON.stringify(payload)); } catch(e) {}
-            if (!db) return;
-            db.set(payload).catch(err => {
-                console.error(err);
-                showToast('⚠️ No se guardó en la nube (revisa las Reglas de tu Realtime Database)');
+        // Cada "carpeta" de datos vive en su propia referencia de Firebase y tiene su
+        // propio listener. Así un cambio en un lugar (ej. elegir una idea) nunca puede
+        // pisar o revertir un cambio en otro lugar (ej. el dinero de la alcancía).
+        // El dinero además usa transacciones atómicas: la base de datos suma/resta
+        // sobre el valor MÁS RECIENTE del servidor, nunca sobre una copia vieja en el
+        // celular — así nunca se "pierde" un ahorro aunque los dos toquen al mismo tiempo.
+
+        function pushIdeas() { if (ideasRef) ideasRef.set(currentIdeas); cacheLocal(); }
+        function pushChosen() { if (chosenRef) chosenRef.set(chosenBy); cacheLocal(); }
+        function pushAirIdeas() { if (airIdeasRef) airIdeasRef.set(airIdeas); cacheLocal(); }
+        function pushPeople() { if (peopleRef) peopleRef.set(people); cacheLocal(); }
+        function pushVersus() { if (versusRef) versusRef.set(versus); cacheLocal(); }
+
+        // Agrega/edita/borra UN plan sin tocar los demás (evita perder otros planes)
+        function pushPlanUpsert(plan) { if (savedPlansRef) savedPlansRef.child(String(plan.id)).set(plan); cacheLocal(); }
+        function pushPlanRemove(id) { if (savedPlansRef) savedPlansRef.child(String(id)).remove(); cacheLocal(); }
+
+        // Ajusta la alcancía SOBRE EL VALOR MÁS RECIENTE del servidor (suma o resta segura)
+        function piggyTransaction(mutator, onDone) {
+            if (!piggyRef) { mutator(piggy); renderPiggy(); cacheLocal(); if (onDone) onDone(true, piggy); return; }
+            piggyRef.transaction(current => {
+                const base = current || { goal: piggy.goal || 0, rate: piggy.rate || 0, saved: 0, days: 0, log: [] };
+                return mutator(base) || base;
+            }, (err, committed, snap) => {
+                if (err) { console.error(err); showToast('⚠️ No se pudo actualizar la alcancía (revisa las Reglas)'); if (onDone) onDone(false); return; }
+                if (committed && snap) { piggy = snap.val() || piggy; renderPiggy(); cacheLocal(); }
+                if (onDone) onDone(true, piggy);
             });
         }
-        function pushIdeas() { pushState(); }
-        function pushChosen() { pushState(); }
-        function pushSavedPlans() { pushState(); }
-        function pushAirIdeas() { pushState(); }
-        function pushPiggy() { pushState(); }
-        function pushPeople() { pushState(); }
-
-        function applyRemoteState(data) {
-            people = data.people || people;
-            currentIdeas = data.ideas || currentIdeas;
-            chosenBy = data.chosenBy || chosenBy;
-            savedPlans = data.savedPlans || [];
-            airIdeas = data.airIdeas || [];
-            piggy = data.piggy || piggy;
-            renderAvatars();
-            updateActiveUserLabel();
-            renderCards();
-            renderHistory();
-            renderAirSky();
-            renderPiggy();
-            evaluateSelection(false);
+        function pushPiggySettings() { // solo meta/tasa, se puede sobrescribir directo
+            if (piggyRef) piggyRef.update({ goal: piggy.goal, rate: piggy.rate });
+            cacheLocal();
         }
+        // compatibilidad con nombres viejos usados en otras partes del código
+        function pushSavedPlans() { /* usar pushPlanUpsert/pushPlanRemove en su lugar */ }
+        function pushPiggy() { pushPiggySettings(); }
 
-        function seedRemoteState() {
-            db.set({ people, ideas: currentIdeas, chosenBy, savedPlans, airIdeas, piggy });
+        function cacheLocal() {
+            try { localStorage.setItem('hipocrene_backup', JSON.stringify({ people, ideas: currentIdeas, chosenBy, savedPlans, airIdeas, piggy, versus })); } catch(e) {}
         }
 
         function loadLocalBackup() {
@@ -982,9 +1083,33 @@
                 const raw = localStorage.getItem('hipocrene_backup');
                 if (!raw) return false;
                 const data = JSON.parse(raw);
-                applyRemoteState(data);
+                people = data.people || people;
+                currentIdeas = data.ideas || currentIdeas;
+                chosenBy = data.chosenBy || chosenBy;
+                savedPlans = Array.isArray(data.savedPlans) ? data.savedPlans : [];
+                airIdeas = Array.isArray(data.airIdeas) ? data.airIdeas : [];
+                piggy = data.piggy || piggy;
+                versus = data.versus || versus;
+                renderAll();
                 return true;
             } catch(e) { return false; }
+        }
+
+        function objToArray(obj) {
+            if (!obj) return [];
+            if (Array.isArray(obj)) return obj.filter(Boolean);
+            return Object.values(obj);
+        }
+
+        function renderAll() {
+            renderAvatars();
+            updateActiveUserLabel();
+            renderCards();
+            renderHistory();
+            renderAirSky();
+            renderPiggy();
+            evaluateSelection(false);
+            renderVersusUI(false);
         }
 
         function initFirebaseSync() {
@@ -994,20 +1119,31 @@
             }
             try {
                 firebase.initializeApp(firebaseConfig);
-                db = firebase.database().ref('hipocrene');
+                const root = firebase.database().ref('hipocrene');
+                peopleRef = root.child('people');
+                ideasRef = root.child('ideas');
+                chosenRef = root.child('chosenBy');
+                savedPlansRef = root.child('savedPlans');
+                airIdeasRef = root.child('airIdeas');
+                piggyRef = root.child('piggy');
+                versusRef = root.child('versus');
+
                 let firstConnect = true;
-                db.on('value', (snap) => {
-                    const data = snap.val();
-                    if (firstConnect) {
-                        firstConnect = false;
-                        showToast('🔗 Conectado: la información se guarda y comparte de verdad');
+                root.once('value', (snap) => {
+                    if (!snap.val()) {
+                        // primera vez: siembra la estructura inicial
+                        root.set({ people, ideas: currentIdeas, chosenBy, savedPlans: {}, airIdeas: {}, piggy, versus });
                     }
-                    if (!data) { seedRemoteState(); return; }
-                    applyRemoteState(data);
-                }, (err) => {
-                    console.error(err);
-                    showToast('⚠️ Error de conexión: revisa las reglas de tu Realtime Database');
+                    if (firstConnect) { firstConnect = false; showToast('🔗 Conectado: la información se guarda y comparte de verdad'); }
                 });
+
+                peopleRef.on('value', snap => { if (snap.val()) { people = snap.val(); renderAvatars(); updateActiveUserLabel(); renderCards(); cacheLocal(); } });
+                ideasRef.on('value', snap => { const v = snap.val(); if (v) { currentIdeas = objToArray(v); renderCards(); cacheLocal(); } });
+                chosenRef.on('value', snap => { const v = snap.val(); if (v) { chosenBy = v; evaluateSelection(false); cacheLocal(); } });
+                savedPlansRef.on('value', snap => { savedPlans = objToArray(snap.val()); renderHistory(); cacheLocal(); });
+                airIdeasRef.on('value', snap => { airIdeas = objToArray(snap.val()); renderAirSky(); cacheLocal(); });
+                piggyRef.on('value', snap => { const v = snap.val(); if (v) { piggy = v; renderPiggy(); cacheLocal(); } });
+                versusRef.on('value', snap => { const v = snap.val() || { status: 'none' }; handleVersusUpdate(v); cacheLocal(); });
             } catch (e) {
                 console.error(e);
                 showToast('⚠️ No se pudo conectar: revisa que copiaste bien los datos de Firebase');
@@ -1017,6 +1153,9 @@
         let currentIdeas = [...ideaBank];
         let chosenBy = { tu: null, pareja: null }; // el id que cada quien tiene elegido en este momento
         let finalChosenId = null; // el que quedó acordado (match o resuelto por versus)
+        // versus.status: 'none' | 'pending' (retó, esperando respuesta) | 'accepted' (confirmado, listo para resolver) | 'rejected'
+        let versus = { status: 'none', from: null, ideaFrom: null, ideaTo: null, winnerId: null };
+        let lastVersusStatus = 'none';
         let savedPlans = []; // { id, name, date, dateRaw, photos: [], budget, budgetClass, location, usedPiggy, icon, image }
         let airIdeas = []; // { id, title, note, developed, developedText }
         let sortAscending = true;
@@ -1040,9 +1179,23 @@
         const counterDisplay = document.getElementById('counterDisplay');
         const matchBanner = document.getElementById('matchBanner');
         const matchIdeaName = document.getElementById('matchIdeaName');
-        const versusBanner = document.getElementById('versusBanner');
-        const versusIdeaA = document.getElementById('versusIdeaA');
-        const versusIdeaB = document.getElementById('versusIdeaB');
+        const versusNotify = document.getElementById('versusNotify');
+        const versusNotifyTitle = document.getElementById('versusNotifyTitle');
+        const versusNotifySub = document.getElementById('versusNotifySub');
+        const versusNotifyActions = document.getElementById('versusNotifyActions');
+        const versusAcceptBtn = document.getElementById('versusAcceptBtn');
+        const versusRejectBtn = document.getElementById('versusRejectBtn');
+        const versusArena = document.getElementById('versusArena');
+        const versusFighterA = document.getElementById('versusFighterA');
+        const versusFighterB = document.getElementById('versusFighterB');
+        const versusImgA = document.getElementById('versusImgA');
+        const versusImgB = document.getElementById('versusImgB');
+        const versusNameA = document.getElementById('versusNameA');
+        const versusNameB = document.getElementById('versusNameB');
+        const versusOwnerA = document.getElementById('versusOwnerA');
+        const versusOwnerB = document.getElementById('versusOwnerB');
+        const versusDiceBtn = document.getElementById('versusDiceBtn');
+        const versusCoinBtn = document.getElementById('versusCoinBtn');
         const selectedPlanDisplay = document.getElementById('selectedPlanDisplay');
         const dateTimePicker = document.getElementById('dateTimePicker');
         const savePlanBtn = document.getElementById('savePlanBtn');
@@ -1206,12 +1359,21 @@
             const cardEl = carousel.querySelector(`.card[data-id="${id}"]`);
             if (cardEl) cardEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
             evaluateSelection(true);
+
+            // Si con esta elección quedaron distintos y todavía no hay un versus en curso,
+            // se lanza el reto automáticamente hacia la otra persona.
+            const other = otherUserKey(activeUser);
+            if (chosenBy.tu !== null && chosenBy.pareja !== null && chosenBy.tu !== chosenBy.pareja && versus.status === 'none') {
+                versus = { status: 'pending', from: activeUser, ideaFrom: chosenBy[activeUser], ideaTo: chosenBy[other], winnerId: null };
+                lastVersusStatus = 'pending';
+                pushVersus();
+                renderVersusUI(false);
+            }
         }
 
-        // Decide si hay match, versus (eligieron distinto) o falta que elija el otro
+        // Decide si hay match directo o falta que elija el otro (el versus se maneja aparte)
         function evaluateSelection(fromUserAction) {
             const a = chosenBy.tu, b = chosenBy.pareja;
-            versusBanner.classList.remove('show');
             if (a !== null && b !== null && a === b) {
                 finalChosenId = a;
                 const idea = currentIdeas.find(i => i.id === a);
@@ -1225,16 +1387,6 @@
                 matchBanner.classList.remove('show');
                 finalChosenId = null;
                 selectedPlanDisplay.textContent = 'Ninguno';
-                const ideaA = currentIdeas.find(i => i.id === a);
-                const ideaB = currentIdeas.find(i => i.id === b);
-                if (ideaA && ideaB) {
-                    versusIdeaA.querySelector('span').textContent = people.tu.emoji + ' ' + ideaA.title;
-                    versusIdeaB.querySelector('span').textContent = people.pareja.emoji + ' ' + ideaB.title;
-                    versusIdeaA.dataset.ideaId = ideaA.id;
-                    versusIdeaB.dataset.ideaId = ideaB.id;
-                    versusBanner.classList.add('show');
-                    if (fromUserAction) showToast('⚔️ Eligieron diferente: toca un corazón, el dado 🎲 o la moneda 🪙 para el versus');
-                }
             } else {
                 matchBanner.classList.remove('show');
                 finalChosenId = null;
@@ -1246,31 +1398,146 @@
             renderCards();
         }
 
-        // Resuelve el versus entre las dos ideas elegidas (usado por dado y moneda cuando hay empate distinto)
-        function resolveVersus(winnerId) {
-            const idea = currentIdeas.find(i => i.id === winnerId);
-            if (!idea) return;
-            chosenBy.tu = winnerId;
-            chosenBy.pareja = winnerId;
-            finalChosenId = winnerId;
-            pushChosen();
-            versusBanner.classList.remove('show');
-            matchIdeaName.textContent = idea.title;
-            matchBanner.classList.add('show');
-            selectedPlanDisplay.textContent = idea.title;
-            createConfetti();
-            showToast('🏆 ¡Ganó "' + idea.title + '"! Ya quedó elegido para los dos');
-            renderCards();
+        // ---------- FLUJO DEL VERSUS: reto, notificación, aceptar/rechazar, arena, resolver ----------
+        function handleVersusUpdate(v) {
+            const prevStatus = lastVersusStatus;
+            versus = v;
+
+            // Notificaciones según la transición de estado (solo una vez, no en cada render)
+            if (prevStatus !== 'accepted' && v.status === 'accepted' && v.from === activeUser) {
+                const other = people[otherUserKey(activeUser)].name;
+                showToast('🔥 ¡' + other + ' aceptó tu VERSUS!');
+            }
+            if (prevStatus !== 'rejected' && v.status === 'rejected' && v.from === activeUser) {
+                const other = people[otherUserKey(activeUser)].name;
+                showToast('💔 ' + other + ' rechazó el VERSUS');
+                setTimeout(() => {
+                    if (versus.status === 'rejected') {
+                        chosenBy.tu = null; chosenBy.pareja = null;
+                        pushChosen();
+                        versus = { status: 'none', from: null, ideaFrom: null, ideaTo: null, winnerId: null };
+                        pushVersus();
+                    }
+                }, 2600);
+            }
+            if (prevStatus !== 'pending' && v.status === 'pending' && v.from !== activeUser) {
+                showToast('⚔️ ¡' + people[v.from].name + ' te retó a un VERSUS!');
+            }
+            lastVersusStatus = v.status;
+            renderVersusUI(true);
         }
 
-        // Elegir directo con el corazón dentro del versus (sin dado ni moneda)
-        versusIdeaA.addEventListener('click', () => {
-            const id = Number(versusIdeaA.dataset.ideaId);
-            if (id) resolveVersus(id);
+        function renderVersusUI(animated) {
+            versusNotify.classList.remove('show');
+            versusArena.classList.remove('show', 'winner-reveal');
+            if (!versus || versus.status === 'none') return;
+
+            const ideaFrom = currentIdeas.find(i => i.id === versus.ideaFrom);
+            const ideaTo = currentIdeas.find(i => i.id === versus.ideaTo);
+            if (!ideaFrom || !ideaTo) return;
+
+            if (versus.status === 'pending') {
+                if (versus.from === activeUser) {
+                    // Yo reté: veo "esperando respuesta"
+                    versusNotifyTitle.textContent = '⏳ Esperando respuesta...';
+                    versusNotifySub.innerHTML = 'Le enviaste el VS "<strong>' + ideaFrom.title + '</strong> vs ' + ideaTo.title + '" a ' + people[otherUserKey(activeUser)].name;
+                    versusNotifyActions.innerHTML = '<button class="versus-btn reject" id="versusCancelBtn"><i class="fas fa-ban"></i> Cancelar</button>';
+                    document.getElementById('versusCancelBtn').addEventListener('click', cancelVersus);
+                } else {
+                    // Me retaron: muestro Aceptar/Rechazar
+                    versusNotifyTitle.textContent = '⚔️ ¡Te retaron a un VERSUS!';
+                    versusNotifySub.innerHTML = '<strong>' + people[versus.from].name + '</strong> eligió "' + ideaFrom.title + '", tú elegiste "' + ideaTo.title + '"';
+                    versusNotifyActions.innerHTML = '';
+                    versusNotifyActions.appendChild(versusAcceptBtn);
+                    versusNotifyActions.appendChild(versusRejectBtn);
+                }
+                versusNotify.classList.add('show');
+            } else if (versus.status === 'accepted') {
+                const isFromLeft = true; // el retador siempre a la izquierda
+                versusImgA.src = ideaFrom.image; versusImgA.alt = ideaFrom.title;
+                versusNameA.textContent = ideaFrom.emoji + ' ' + ideaFrom.title;
+                versusOwnerA.textContent = people[versus.from].emoji + ' ' + people[versus.from].name;
+                versusFighterA.dataset.ideaId = ideaFrom.id;
+
+                versusImgB.src = ideaTo.image; versusImgB.alt = ideaTo.title;
+                versusNameB.textContent = ideaTo.emoji + ' ' + ideaTo.title;
+                versusOwnerB.textContent = people[otherUserKey(versus.from)].emoji + ' ' + people[otherUserKey(versus.from)].name;
+                versusFighterB.dataset.ideaId = ideaTo.id;
+
+                versusArena.classList.add('show');
+            }
+        }
+
+        function cancelVersus() {
+            chosenBy.tu = null; chosenBy.pareja = null;
+            pushChosen();
+            versus = { status: 'none', from: null, ideaFrom: null, ideaTo: null, winnerId: null };
+            lastVersusStatus = 'none';
+            pushVersus();
+            renderVersusUI(false);
+            showToast('❌ Reto cancelado');
+        }
+
+        function acceptVersusChallenge() {
+            versus.status = 'accepted';
+            pushVersus();
+            renderVersusUI(false);
+            showToast('🔥 ¡Aceptaste el VERSUS!');
+        }
+        function rejectVersusChallenge() {
+            versus.status = 'rejected';
+            pushVersus();
+            renderVersusUI(false);
+            showToast('💔 Rechazaste el VERSUS');
+            setTimeout(() => {
+                chosenBy[activeUser] = null;
+                pushChosen();
+            }, 400);
+        }
+        versusAcceptBtn.addEventListener('click', acceptVersusChallenge);
+        versusRejectBtn.addEventListener('click', rejectVersusChallenge);
+
+        // Resuelve el versus (usado por dado, moneda, o tocar directamente una tarjeta)
+        function resolveVersusChallenge(winnerId, revealFirst) {
+            const idea = currentIdeas.find(i => i.id === winnerId);
+            if (!idea) return;
+            function commit() {
+                chosenBy.tu = winnerId;
+                chosenBy.pareja = winnerId;
+                finalChosenId = winnerId;
+                pushChosen();
+                versus = { status: 'none', from: null, ideaFrom: null, ideaTo: null, winnerId: null };
+                lastVersusStatus = 'none';
+                pushVersus();
+                versusArena.classList.remove('show', 'winner-reveal');
+                matchIdeaName.textContent = idea.title;
+                matchBanner.classList.add('show');
+                selectedPlanDisplay.textContent = idea.title;
+                createConfetti();
+                showToast('🏆 ¡Ganó "' + idea.title + '"! Ya quedó elegido para los dos');
+                renderCards();
+            }
+            if (revealFirst) {
+                versusFighterA.classList.toggle('winner', Number(versusFighterA.dataset.ideaId) === winnerId);
+                versusFighterB.classList.toggle('winner', Number(versusFighterB.dataset.ideaId) === winnerId);
+                versusArena.classList.add('winner-reveal');
+                setTimeout(commit, 1100);
+            } else {
+                commit();
+            }
+        }
+
+        versusFighterA.addEventListener('click', () => resolveVersusChallenge(Number(versusFighterA.dataset.ideaId), true));
+        versusFighterB.addEventListener('click', () => resolveVersusChallenge(Number(versusFighterB.dataset.ideaId), true));
+        versusDiceBtn.addEventListener('click', () => {
+            const a = Number(versusFighterA.dataset.ideaId), b = Number(versusFighterB.dataset.ideaId);
+            versusDiceBtn.disabled = true;
+            setTimeout(() => { versusDiceBtn.disabled = false; resolveVersusChallenge(Math.random() > 0.5 ? a : b, true); }, 500);
         });
-        versusIdeaB.addEventListener('click', () => {
-            const id = Number(versusIdeaB.dataset.ideaId);
-            if (id) resolveVersus(id);
+        versusCoinBtn.addEventListener('click', () => {
+            const a = Number(versusFighterA.dataset.ideaId), b = Number(versusFighterB.dataset.ideaId);
+            versusCoinBtn.disabled = true;
+            setTimeout(() => { versusCoinBtn.disabled = false; resolveVersusChallenge(Math.random() > 0.5 ? a : b, true); }, 500);
         });
 
         function showToast(message) {
@@ -1339,10 +1606,10 @@
         });
 
         // ---------- BOTÓN ALEATORIO Y MONEDA ----------
-        // Si tú y tu pareja eligieron ideas distintas (versus pendiente), estos botones
-        // deciden entre ESAS DOS. Si no hay versus, deciden entre todas (para cuando nadie se decide).
+        // Si el versus ya fue ACEPTADO por ambos, estos botones deciden entre esas dos ideas.
+        // Si no hay versus, deciden entre todas (para cuando nadie se decide).
         function versusPending() {
-            return chosenBy.tu !== null && chosenBy.pareja !== null && chosenBy.tu !== chosenBy.pareja;
+            return versus && versus.status === 'accepted';
         }
 
         randomBtn.addEventListener('click', () => {
@@ -1351,8 +1618,10 @@
             setTimeout(() => {
                 randomBtn.classList.remove('spinning');
                 if (versusPending()) {
-                    const winnerId = Math.random() > 0.5 ? chosenBy.tu : chosenBy.pareja;
-                    resolveVersus(winnerId);
+                    const winnerId = Math.random() > 0.5 ? versus.ideaFrom : versus.ideaTo;
+                    resolveVersusChallenge(winnerId, true);
+                } else if (versus && versus.status === 'pending') {
+                    showToast('⚔️ Hay un VERSUS esperando respuesta: acéptenlo primero');
                 } else {
                     const pick = currentIdeas[Math.floor(Math.random() * currentIdeas.length)];
                     chosenBy.tu = pick.id; chosenBy.pareja = pick.id;
@@ -1367,13 +1636,18 @@
         coinBtn.addEventListener('click', () => {
             coinBtn.classList.add('spinning');
             if (versusPending()) {
-                const ideaA = currentIdeas.find(i => i.id === chosenBy.tu);
-                const ideaB = currentIdeas.find(i => i.id === chosenBy.pareja);
+                const ideaA = currentIdeas.find(i => i.id === versus.ideaFrom);
+                const ideaB = currentIdeas.find(i => i.id === versus.ideaTo);
                 showToast('🪙 Cara: ' + ideaA.title + ' · Sello: ' + ideaB.title);
                 setTimeout(() => {
                     coinBtn.classList.remove('spinning');
-                    resolveVersus(Math.random() > 0.5 ? chosenBy.tu : chosenBy.pareja);
+                    resolveVersusChallenge(Math.random() > 0.5 ? versus.ideaFrom : versus.ideaTo, true);
                 }, 900);
+                return;
+            }
+            if (versus && versus.status === 'pending') {
+                coinBtn.classList.remove('spinning');
+                showToast('⚔️ Hay un VERSUS esperando respuesta: acéptenlo primero');
                 return;
             }
             if (currentIdeas.length < 2) { showToast('⚠️ Necesitas al menos 2 ideas para lanzar la moneda'); coinBtn.classList.remove('spinning'); return; }
@@ -1485,13 +1759,12 @@
                 chosenBy.tu = null;
                 chosenBy.pareja = null;
                 matchBanner.classList.remove('show');
-                versusBanner.classList.remove('show');
                 selectedPlanDisplay.textContent = 'Ninguno';
                 pushChosen();
                 renderCards();
             }
 
-            pushSavedPlans();
+            pushPlanRemove(planId); // borra SOLO este plan en la nube
             renderHistory();
             showToast('🗑️ Plan borrado');
         }
@@ -1532,55 +1805,71 @@
             });
 
             const budget = Number(planBudgetInput.value) || 0;
-            let usedPiggy = usePiggyToggle.checked;
-            if (usedPiggy) {
-                if (piggy.saved <= 0) {
-                    // Ya NO bloquea el guardado: solo avisa y sigue sin descontar nada.
-                    usedPiggy = false;
-                    showToast('⚠️ Tu alcancía está vacía, se guarda el plan sin descontar');
-                } else {
-                    const deduction = budget > 0 ? Math.min(budget, piggy.saved) : piggy.saved;
-                    piggy.saved -= deduction;
-                    renderPiggy();
-                    showToast('🐷 Se descontaron ' + formatMoney(deduction) + ' de la alcancía');
-                }
+            const wantsPiggy = usePiggyToggle.checked;
+
+            function finishSavingPlan(usedPiggy) {
+                const chosenIdea = currentIdeas.find(i => i.title === planName);
+                const planIcon = useIconForPlan ? (selectedPlanIcon || '🎉') : null;
+                const planImage = (!useIconForPlan && chosenIdea) ? chosenIdea.image : null;
+
+                const newPlan = {
+                    id: Date.now(),
+                    name: planName,
+                    date: formattedDate,
+                    dateRaw: dateVal,
+                    photos: [],
+                    budget: budget,
+                    budgetClass: planBudgetClass.value,
+                    location: locationInput.value.trim(),
+                    usedPiggy: usedPiggy,
+                    icon: planIcon,
+                    image: planImage,
+                    savedBy: activeUser
+                };
+                savedPlans.push(newPlan);
+                pushPlanUpsert(newPlan); // escribe SOLO este plan, sin tocar los demás
+                renderHistory();
+
+                // Liberamos la elección actual para poder armar un nuevo plan desde cero.
+                finalChosenId = null;
+                chosenBy.tu = null;
+                chosenBy.pareja = null;
+                pushChosen();
+                versus = { status: 'none', from: null, ideaFrom: null, ideaTo: null, winnerId: null };
+                pushVersus();
+                renderCards();
+                renderVersusUI(false);
+
+                selectedPlanDisplay.textContent = 'Ninguno';
+                matchBanner.classList.remove('show');
+                locationInput.value = '';
+                planBudgetInput.value = '';
+                usePiggyToggle.checked = false;
+                showToast('📅 ¡Salida guardada! Podrás agregarle fotos en su álbum. Ya puedes elegir otra idea para un nuevo plan.');
             }
 
-            const chosenIdea = currentIdeas.find(i => i.title === planName);
-            const planIcon = useIconForPlan ? (selectedPlanIcon || '🎉') : null;
-            const planImage = (!useIconForPlan && chosenIdea) ? chosenIdea.image : null;
-
-            savedPlans.push({
-                id: Date.now(),
-                name: planName,
-                date: formattedDate,
-                dateRaw: dateVal,
-                photos: [],
-                budget: budget,
-                budgetClass: planBudgetClass.value,
-                location: locationInput.value.trim(),
-                usedPiggy: usedPiggy,
-                icon: planIcon,
-                image: planImage,
-                savedBy: activeUser
-            });
-            pushSavedPlans();
-
-            // Liberamos la elección actual para poder armar un nuevo plan desde cero.
-            finalChosenId = null;
-            chosenBy.tu = null;
-            chosenBy.pareja = null;
-            pushChosen();
-            renderCards();
-
-            renderHistory();
-            selectedPlanDisplay.textContent = 'Ninguno';
-            matchBanner.classList.remove('show');
-            versusBanner.classList.remove('show');
-            locationInput.value = '';
-            planBudgetInput.value = '';
-            usePiggyToggle.checked = false;
-            showToast('📅 ¡Salida guardada! Podrás agregarle fotos en su álbum. Ya puedes elegir otra idea para un nuevo plan.');
+            if (wantsPiggy) {
+                if (piggy.saved <= 0) {
+                    showToast('⚠️ Tu alcancía está vacía, se guarda el plan sin descontar');
+                    finishSavingPlan(false);
+                    return;
+                }
+                // Descuento ATÓMICO: se calcula sobre el valor más reciente del servidor,
+                // así nunca se resta dos veces de golpe ni queda desincronizado.
+                piggyTransaction((current) => {
+                    const saved = current.saved || 0;
+                    if (saved <= 0) return current; // ya no había fondos al momento real
+                    const deduction = budget > 0 ? Math.min(budget, saved) : saved;
+                    current.saved = saved - deduction;
+                    current._lastDeduction = deduction;
+                    return current;
+                }, (ok, finalPiggy) => {
+                    if (ok && finalPiggy) showToast('🐷 Se descontaron ' + formatMoney(finalPiggy._lastDeduction || 0) + ' de la alcancía');
+                    finishSavingPlan(true);
+                });
+            } else {
+                finishSavingPlan(false);
+            }
         });
 
         window.scrollToCalendar = function() {
@@ -1621,7 +1910,7 @@
                 btn.addEventListener('click', () => {
                     const plan = savedPlans.find(p => p.id === activePlanId);
                     plan.photos.splice(Number(btn.dataset.idx), 1);
-                    pushSavedPlans();
+                    pushPlanUpsert(plan);
                     renderAlbumGrid(plan);
                     renderHistory();
                 });
@@ -1643,7 +1932,7 @@
                     plan.photos.push({ src: ev.target.result, caption: caption.trim() });
                     pending--;
                     if (pending === 0) {
-                        pushSavedPlans();
+                        pushPlanUpsert(plan);
                         renderAlbumGrid(plan);
                         renderHistory();
                         showToast('📸 Fotos agregadas al álbum y al carrusel de recuerdos');
@@ -1803,7 +2092,7 @@
 
         goalInput.addEventListener('change', () => {
             piggy.goal = Number(goalInput.value) || 0;
-            pushPiggy();
+            pushPiggySettings();
             renderPiggy();
         });
         goalInput.addEventListener('input', () => {
@@ -1812,7 +2101,7 @@
         });
         rateInput.addEventListener('change', () => {
             piggy.rate = Number(rateInput.value) || 0;
-            pushPiggy();
+            pushPiggySettings();
             renderPiggy();
         });
         rateInput.addEventListener('input', () => {
@@ -1823,18 +2112,28 @@
         saveTodayBtn.addEventListener('click', () => {
             if (piggy.rate <= 0) { showToast('⚠️ Define primero tu tasa diaria fija'); return; }
             if (piggy.goal > 0 && piggy.saved >= piggy.goal) { showToast('🎉 ¡Ya alcanzaron su meta!'); return; }
-            piggy.days += 1;
-            piggy.saved += piggy.rate;
-            if (piggy.goal > 0 && piggy.saved > piggy.goal) piggy.saved = piggy.goal;
-            piggy.log.push({ day: piggy.days, amount: piggy.rate });
-            pushPiggy();
-            renderPiggy();
-            if (piggy.goal > 0 && piggy.saved >= piggy.goal) {
-                createConfetti();
-                showToast('🎉 ¡Llegaron a la meta de ahorro!');
-            } else {
-                showToast('🐷 Ahorro de hoy registrado: ' + formatMoney(piggy.rate));
-            }
+            const rateNow = piggy.rate;
+            saveTodayBtn.disabled = true;
+            // Transacción atómica: suma SIEMPRE sobre el valor más reciente del servidor,
+            // así nunca se pierde un ahorro aunque los dos toquen "Ahorrar hoy" casi juntos.
+            piggyTransaction((current) => {
+                current.rate = rateNow;
+                current.days = (current.days || 0) + 1;
+                current.saved = (current.saved || 0) + rateNow;
+                if (current.goal > 0 && current.saved > current.goal) current.saved = current.goal;
+                current.log = Array.isArray(current.log) ? current.log : [];
+                current.log.push({ day: current.days, amount: rateNow });
+                return current;
+            }, (ok, finalPiggy) => {
+                saveTodayBtn.disabled = false;
+                if (!ok) return;
+                if (finalPiggy.goal > 0 && finalPiggy.saved >= finalPiggy.goal) {
+                    createConfetti();
+                    showToast('🎉 ¡Llegaron a la meta de ahorro!');
+                } else {
+                    showToast('🐷 Ahorro de hoy registrado: ' + formatMoney(rateNow));
+                }
+            });
         });
 
         // ---------- INICIALIZAR ----------
@@ -1843,6 +2142,8 @@
             currentIdeas = [...ideaBank];
             chosenBy = { tu: null, pareja: null };
             finalChosenId = null;
+            versus = { status: 'none', from: null, ideaFrom: null, ideaTo: null, winnerId: null };
+            lastVersusStatus = 'none';
             savedPlans = [];
             airIdeas = [];
 
@@ -1856,7 +2157,8 @@
             renderPiggy();
             selectedPlanDisplay.textContent = 'Ninguno';
             matchBanner.classList.remove('show');
-            versusBanner.classList.remove('show');
+            versusNotify.classList.remove('show');
+            versusArena.classList.remove('show');
 
             // Carga instantánea desde el respaldo local, por si la nube tarda o falla
             loadLocalBackup();
