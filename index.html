@@ -1140,7 +1140,11 @@
                 peopleRef.on('value', snap => { if (snap.val()) { people = snap.val(); renderAvatars(); updateActiveUserLabel(); renderCards(); cacheLocal(); } });
                 ideasRef.on('value', snap => { const v = snap.val(); if (v) { currentIdeas = objToArray(v); renderCards(); cacheLocal(); } });
                 chosenRef.on('value', snap => { const v = snap.val(); if (v) { chosenBy = v; evaluateSelection(false); cacheLocal(); } });
-                savedPlansRef.on('value', snap => { savedPlans = objToArray(snap.val()); renderHistory(); cacheLocal(); });
+                savedPlansRef.on('value', snap => {
+                    savedPlans = objToArray(snap.val()).map(p => ({ photos: [], ...p, photos: Array.isArray(p.photos) ? p.photos : [] }));
+                    renderHistory();
+                    cacheLocal();
+                });
                 airIdeasRef.on('value', snap => { airIdeas = objToArray(snap.val()); renderAirSky(); cacheLocal(); });
                 piggyRef.on('value', snap => { const v = snap.val(); if (v) { piggy = v; renderPiggy(); cacheLocal(); } });
                 versusRef.on('value', snap => { const v = snap.val() || { status: 'none' }; handleVersusUpdate(v); cacheLocal(); });
@@ -1714,7 +1718,7 @@
                 const budgetChip = plan.budget ? `<span class="plan-meta-chip budget"><i class="fas fa-tag"></i> ${plan.budgetClass} · ${formatMoney(plan.budget)}</span>` : '';
                 const piggyChip = plan.usedPiggy ? `<span class="plan-meta-chip piggy"><i class="fas fa-piggy-bank"></i> Con alcancía</span>` : '';
                 const locationChip = plan.location ? `<span class="plan-meta-chip"><i class="fas fa-map-marker-alt"></i> ${plan.location}</span>` : '';
-                const savedByChip = plan.savedBy ? `<span class="plan-meta-chip">${people[plan.savedBy].emoji} ${people[plan.savedBy].name}</span>` : '';
+                const savedByChip = (plan.savedBy && people[plan.savedBy]) ? `<span class="plan-meta-chip">${people[plan.savedBy].emoji} ${people[plan.savedBy].name}</span>` : '';
                 item.innerHTML = `
                     <span class="plan-icon">${plan.icon ? plan.icon : '<i class="fas fa-check-circle" style="color:#4d8dff;"></i>'}</span>
                     <div class="plan-main">
@@ -1726,7 +1730,7 @@
                     </div>
                     <div class="history-item-actions">
                         <button class="album-btn" data-plan-id="${plan.id}">
-                            <i class="fas fa-images"></i> Álbum <span class="count">${plan.photos.length}</span>
+                            <i class="fas fa-images"></i> Álbum <span class="count">${(plan.photos || []).length}</span>
                         </button>
                         <button class="delete-plan-btn" data-plan-id="${plan.id}" title="Borrar plan">
                             <i class="fas fa-trash"></i>
@@ -1779,7 +1783,7 @@
         function renderMemories() {
             const allPhotos = [];
             savedPlans.forEach(plan => {
-                plan.photos.forEach(photo => allPhotos.push({ ...photo, planName: plan.name }));
+                (plan.photos || []).forEach(photo => allPhotos.push({ ...photo, planName: plan.name }));
             });
             if (allPhotos.length === 0) {
                 memoriesCarousel.innerHTML = '<div class="empty-history">Aún no hay recuerdos guardados 📷</div>';
@@ -1895,6 +1899,7 @@
         }
 
         function renderAlbumGrid(plan) {
+            if (!Array.isArray(plan.photos)) plan.photos = [];
             albumGrid.innerHTML = '';
             if (plan.photos.length === 0) {
                 albumGrid.innerHTML = '<div class="album-empty">Aún no hay fotos de este plan 📷<br>¡Agrega los recuerdos!</div>';
@@ -1909,6 +1914,7 @@
             albumGrid.querySelectorAll('.remove-photo').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const plan = savedPlans.find(p => p.id === activePlanId);
+                    if (!Array.isArray(plan.photos)) plan.photos = [];
                     plan.photos.splice(Number(btn.dataset.idx), 1);
                     pushPlanUpsert(plan);
                     renderAlbumGrid(plan);
@@ -1925,6 +1931,7 @@
             const plan = savedPlans.find(p => p.id === activePlanId);
             if (!plan) return;
             const caption = prompt('✍️ Descripción para este recuerdo (opcional):', plan.name) || '';
+            if (!Array.isArray(plan.photos)) plan.photos = [];
             let pending = files.length;
             files.forEach(file => {
                 const reader = new FileReader();
