@@ -250,6 +250,16 @@
             padding: 4px 14px; border-radius: 30px; font-size: 12px; font-weight: 600;
             margin-top: 8px; border: 1px solid rgba(255,255,255,0.1);
         }
+        .card-delete-btn {
+            position: absolute; top: 16px; left: 16px; width: 42px; height: 42px;
+            border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; color: white;
+            background: rgba(10,14,35,0.55); backdrop-filter: blur(12px);
+            transition: all 0.2s ease; z-index: 3;
+        }
+        .card-delete-btn:hover { background: rgba(239,68,68,0.55); transform: scale(1.08); }
+        .card-delete-btn:active { transform: scale(0.85); }
         .heart-btn {
             position: absolute; top: 16px; right: 16px; width: 52px; height: 52px;
             border-radius: 50%; border: none; cursor: pointer;
@@ -1292,7 +1302,22 @@
                 ideasRef.on('value', snap => { const v = snap.val(); if (v) { currentIdeas = objToArray(v); renderCards(); cacheLocal(); } });
                 chosenRef.on('value', snap => { const v = snap.val(); if (v) { chosenBy = v; evaluateSelection(false); cacheLocal(); } });
                 savedPlansRef.on('value', snap => {
-                    savedPlans = objToArray(snap.val()).map(p => ({ photos: [], ...p, photos: Array.isArray(p.photos) ? p.photos : [] }));
+                    const raw = snap.val();
+                    // MIGRACIÓN AUTOMÁTICA: si la base todavía tiene los planes guardados
+                    // como un array por POSICIÓN (esquema viejo), el borrado por ID real
+                    // apunta a una clave que no existe (índice, no id) y "parece borrar"
+                    // pero no borra nada de verdad, y reaparece al recargar.
+                    // Aquí lo reescribimos UNA VEZ como objeto indexado por id real.
+                    if (Array.isArray(raw) && raw.length > 0) {
+                        const migrated = {};
+                        raw.filter(Boolean).forEach(p => {
+                            const id = p.id || genId();
+                            migrated[String(id)] = { ...p, id };
+                        });
+                        savedPlansRef.set(migrated, firebaseErrorHandler('migrar salidas'));
+                        return; // el propio set() disparará este listener otra vez, ya con el esquema correcto
+                    }
+                    savedPlans = objToArray(raw).map(p => ({ photos: [], ...p, photos: Array.isArray(p.photos) ? p.photos : [] }));
                     renderHistory();
                     cacheLocal();
                 });
@@ -1513,6 +1538,7 @@
                     <div class="card-gradient"></div>
                     <div class="chosen-badge"><i class="fas fa-heart"></i> Elegido</div>
                     ${pickTags.length ? `<div class="pick-tags">${pickTags.join('')}</div>` : ''}
+                    <button class="card-delete-btn" data-id="${idea.id}" title="Borrar idea"><i class="fas fa-trash"></i></button>
                     <button class="heart-btn${pickedByMe ? ' filled' : ''}" data-id="${idea.id}">
                         <i class="${pickedByMe ? 'fas' : 'far'} fa-heart"></i>
                     </button>
@@ -1527,7 +1553,33 @@
             carousel.querySelectorAll('.heart-btn').forEach(btn => {
                 btn.addEventListener('click', () => chooseIdea(Number(btn.dataset.id)));
             });
+            carousel.querySelectorAll('.card-delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => { e.stopPropagation(); deleteIdea(Number(btn.dataset.id)); });
+            });
             updateCounter();
+        }
+
+        // Borra una idea del carrusel por su ID real (no por posición). Si ya está
+        // convertida en una salida guardada, esa salida NO se toca — solo se quita
+        // la card de "para elegir".
+        function deleteIdea(ideaId) {
+            const idea = currentIdeas.find(i => i.id === ideaId);
+            if (!idea) return;
+            if (!confirm('¿Borrar la idea "' + idea.title + '" del carrusel?')) return;
+            currentIdeas = currentIdeas.filter(i => i.id !== ideaId);
+            if (chosenBy.tu === ideaId || chosenBy.pareja === ideaId) {
+                if (chosenBy.tu === ideaId) chosenBy.tu = null;
+                if (chosenBy.pareja === ideaId) chosenBy.pareja = null;
+                pushChosen();
+            }
+            if (finalChosenId === ideaId) {
+                finalChosenId = null;
+                matchBanner.classList.remove('show');
+                selectedPlanDisplay.textContent = 'Ninguno';
+            }
+            pushIdeas(); // reescribe el array completo de ideas (esto sí es seguro overwrite total)
+            renderCards();
+            showToast('🗑️ Idea borrada');
         }
 
         function chooseIdea(id) {
@@ -1989,12 +2041,27 @@
                     showToast('⚠️ No se pudo borrar (revisa las Reglas de Firebase)');
                     return; // la UI no cambia: el plan sigue existiendo de verdad, así que se sigue mostrando
                 }
-                // Confirmado por el servidor: ahora sí lo quitamos de la interfaz.
-                savedPlans = savedPlans.filter(p => p.id !== planId);
-                freeIdeaIfMatchedTo(plan);
-                cacheLocal();
-                renderHistory();
-                showToast('🗑️ Plan borrado y confirmado en la base de datos');
+                // Red de seguridad: confirmamos contra el servidor que ya no queda NINGÚN
+                // registro con este id bajo ninguna clave (por si quedó una clave vieja
+                // distinta al id, de un esquema anterior).
+                savedPlansRef.once('value', (verifySnap) => {
+                    const raw = verifySnap.val();
+                    if (raw) {
+                        const entries = Array.isArray(raw)
+                            ? raw.map((v, i) => [String(i), v]).filter(([, v]) => v)
+                            : Object.entries(raw);
+                        entries.forEach(([key, val]) => {
+                            if (val && String(val.id) === String(planId)) {
+                                savedPlansRef.child(key).remove(firebaseErrorHandler('borrar salida (residual)'));
+                            }
+                        });
+                    }
+                    savedPlans = savedPlans.filter(p => p.id !== planId);
+                    freeIdeaIfMatchedTo(plan);
+                    cacheLocal();
+                    renderHistory();
+                    showToast('🗑️ Plan borrado y confirmado en la base de datos');
+                });
             });
         }
 
